@@ -23,11 +23,25 @@ function filterProgrammes (person) {
     })
 }
 
-router.get('/screening', (req, res) => {
+router.use((req, res, next) => {
+  const personaId = req.session.data['persona'] || personas[0].id
+  const persona = personas.find(p => p.id === personaId)
+  if (persona) {
+    req.session.data['userFirstName'] = persona.id
+    req.session.data['userLastName'] = persona.lastName
+  }
+  next()
+})
+
+router.get('/data-settings', (req, res) => {
+  res.render('data-settings', { personas })
+})
+
+router.get('/pages/your-health/vaccines-and-health-checks', (req, res) => {
   const personaId = req.session.data['persona'] || personas[0].id
   const persona = personas.find(p => p.id === personaId)
 
-  res.render('screening', {
+  res.render('pages/your-health/vaccines-and-health-checks', {
     persona,
     personas,
     programmes: filterProgrammes(persona),

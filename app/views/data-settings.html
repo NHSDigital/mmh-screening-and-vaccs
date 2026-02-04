@@ -25,7 +25,36 @@
 
       <hr>
 
-      <form method="post" action="/pages/" novalidate="novalidate">
+      <form method="post" action="/frame" novalidate="novalidate">
+
+        {% set personaItems = [] %}
+        {% for p in personas %}
+          {% set label = p.id + " " + p.lastName + ", " + p.age + ", " + p.sex %}
+          {% if p.proxies | length %}
+            {% set proxyWord = "proxy" if p.proxies | length == 1 else "proxies" %}
+            {% set label = label + " (" + p.proxies | length + " " + proxyWord + ")" %}
+          {% endif %}
+          {% set personaItems = (personaItems.push({
+            "value": p.id,
+            "text": label,
+            "checked": checked("persona", p.id)
+          }), personaItems) %}
+        {% endfor %}
+
+        {{ radios({
+          "idPrefix": "persona",
+          "name": "persona",
+          "fieldset": {
+            "legend": {
+              "text": "Persona",
+              "classes": "nhsuk-fieldset__legend--m"
+            }
+          },
+          "hint": {
+            "text": "Changes which screening and vaccinations are shown"
+          },
+          "items": personaItems
+        }) }}
 
         {{ radios({
           "idPrefix": "web",
@@ -221,40 +250,6 @@
               checked: checked("messageSendingError", "false")
             }
           ]
-        }) }}
-
-        <hr>
-
-        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-3">User account</h2>
-
-        {{ input({
-          "label": {
-          "text": "First name"
-          },
-          "id": "userFirstName",
-          "name": "userFirstName",
-          "classes": "",
-          "value": data['userFirstName']
-        }) }}
-
-        {{ input({
-          "label": {
-          "text": "Last name"
-          },
-          "id": "userLastName",
-          "name": "userLastName",
-          "classes": "",
-          "value": data['userLastName']
-        }) }}
-
-        {{ input({
-          "label": {
-          "text": "NHS number"
-          },
-          "id": "nhsNumber",
-          "name": "nhsNumber",
-          "classes": "nhsuk-input--width-10",
-          "value": data['nhsNumber']
         }) }}
 
         <hr>

@@ -1,0 +1,85 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/home-p9" %}
+
+{% set pageHeading %}
+  Your vaccines and health&nbsp;checks
+{% endset %}
+{% set pageDescription = "Your upcoming and past vaccines and health checks" %}
+
+{% set vaccsAndScreening %}
+  {% set due = programmes | selectattr("status", "equalto", "due") | list %}
+  {% set upcoming = programmes | selectattr("status", "equalto", "upcoming") | list %}
+  {% set unknown = programmes | selectattr("status", "equalto", "unknown") | list %}
+  {% set done = programmes | selectattr("status", "equalto", "done") | list %}
+  {% set optedOut = programmes | selectattr("status", "equalto", "opted-out") | list %}
+
+  {% if due | length %}
+    <h2>Due now</h2>
+    {% for prog in due %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endif %}
+
+  {% if upcoming | length %}
+    <h2>Upcoming</h2>
+    {% for prog in upcoming %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endif %}
+
+  {% if unknown | length %}
+    <h2>Check if you're eligible</h2>
+    {% for prog in unknown %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endif %}
+
+  {% if done | length %}
+    <h2>Done</h2>
+    {% for prog in done %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endif %}
+
+  {% if optedOut | length %}
+    <h2>Opted out</h2>
+    {% for prog in optedOut %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endif %}
+
+  {% if programmes | length == 0 %}
+    <p>You have no upcoming screening or vaccinations.</p>
+  {% endif %}
+
+  {% for proxy in proxies %}
+    <h2>{{ proxy.id }}’s vaccines and health checks</h2>
+    {% for prog in proxy.programmes %}
+      {{ prog.name }}
+    {% endfor %}
+  {% endfor %}
+{% endset %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading | safe }}
+      </h1>
+      <p>
+        Ways to stay healthy, and by stopping illness or catching it early.
+      </p>
+
+      {{ vaccsAndScreening | safe }}
+
+      </div>
+
+    </div>
+  </div>
+
+  {% endblock %}

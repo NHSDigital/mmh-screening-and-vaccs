@@ -84,7 +84,7 @@
       {% if dueCards.length %}
         {{ nhsappCardGroup({
           stacked: true,
-          heading: "Due now",
+          heading: "Book now",
           cards: dueCards
         }) }}
       {% endif %}
@@ -129,14 +129,7 @@
         }) }}
       {% endif %}
 
-      {# Proxy (dependents) vaccines and health checks
-      {% for proxy in proxies %}
-        <h2>{{ proxy.id }}'s vaccines and health checks</h2>
-        {% for prog in proxy.programmes %}
-          {{ prog.name }}
-        {% endfor %}
-      {% endfor %}
-      #}
+      {# To do proxy vaccines and health checks #}
 
     </div>
   </div>

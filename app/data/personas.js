@@ -7,19 +7,19 @@ module.exports = [
     dateOfBirth: "1960-03-15", // 65 years old
     sex: "female",
 
-    // health conditions - enabled to show more eligibility
+    // health conditions
     diabetes: true, // Diabetic eye screening
     smoker: false, // Lung cancer screening
     exSmoker: true, // Lung cancer screening (ex-smoker eligible)
     pregnant: false, // Flu, whooping cough, RSV vaccines
 
-    // vaccine eligibility - enabled to show more eligibility
+    // vaccine eligibility
     clinicalRiskGroup: true, // Flu, pneumococcal vaccines (due to diabetes)
     carer: false, // Flu vaccine
     immunosuppressed: true, // Flu, pneumococcal, shingles, COVID vaccines
     careHomeResident: false, // COVID vaccine
 
-    // screening and vaccination history demonstrating all states:
+    // screening and vaccination history, all states:
     // - complete: has lastDate and not yet due
     // - due: no history OR interval has passed
     // - partial: multi-dose vaccine with incomplete doses

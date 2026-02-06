@@ -32,6 +32,14 @@ module.exports = function (env) { /* eslint-disable-line func-names,no-unused-va
 
   ------------------------------------------------------------------ */
 
+  // Format a date string (YYYY-MM-DD) to a readable format (e.g., "15 March 2024")
+  filters.formatDate = function (dateString) {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    const options = { day: 'numeric', month: 'long', year: 'numeric' }
+    return date.toLocaleDateString('en-GB', options)
+  }
+
   /* keep the following line to return your filters to the app  */
   return filters;
 };

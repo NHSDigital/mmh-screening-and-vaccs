@@ -10,59 +10,63 @@
 {% endset %}
 {% set pageDescription = "Your upcoming and past vaccines and health checks" %}
 
-{% set vaccsAndScreening %}
-  {% set due = programmes | selectattr("status", "equalto", "due") | list %}
-  {% set upcoming = programmes | selectattr("status", "equalto", "upcoming") | list %}
-  {% set unknown = programmes | selectattr("status", "equalto", "unknown") | list %}
-  {% set done = programmes | selectattr("status", "equalto", "done") | list %}
-  {% set optedOut = programmes | selectattr("status", "equalto", "opted-out") | list %}
+{% set dueCards = [] %}
+{% set upcomingCards = [] %}
+{% set unknownCards = [] %}
+{% set completeCards = [] %}
+{% set partialCards = [] %}
+{% set optedOutCards = [] %}
 
-  {% if due | length %}
-    <h2>Due now</h2>
-    {% for prog in due %}
-      {{ prog.name }}
-    {% endfor %}
+{% for prog in programmes %}
+  {% set description = prog.scheduleDescription %}
+  {% set card = { title: prog.name, href: "#", description: description } %}
+
+  {% if prog.status == "due" %}
+    {% if prog.lastDate %}
+      {% set description = "You had this " + prog.lastDate | formatDate %}
+    {% endif %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set dueCards = (dueCards.push(card), dueCards) %}
+
+  {% elif prog.status == "upcoming" %}
+    {% if prog.nextDueDate %}
+      {% set description = "Due: " + prog.nextDueDate | formatDate %}
+    {% endif %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set upcomingCards = (upcomingCards.push(card), upcomingCards) %}
+
+  {% elif prog.status == "unknown" %}
+    {% if prog.eligibilityReasons.length %}
+      {% set description = "You may be eligible because " + prog.eligibilityReasons | join(" and ") %}
+    {% endif %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set unknownCards = (unknownCards.push(card), unknownCards) %}
+
+  {% elif prog.status == "complete" %}
+    {% if prog.lastDate %}
+      {% set description = "You had this " + prog.lastDate | formatDate %}
+      {% if prog.nextDueDate %}
+        {% set description = description + "Next due " + prog.nextDueDate | formatDate %}
+      {% endif %}
+    {% endif %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set completeCards = (completeCards.push(card), completeCards) %}
+
+  {% elif prog.status == "partial" %}
+    {% if prog.lastDate %}
+      {% set description = "Last dose: " + prog.lastDate | formatDate %}
+      {% if prog.doses %}
+        {% set description = description + " (" + prog.doses + " of " + prog.schedule.doses + " doses)" %}
+      {% endif %}
+    {% endif %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set partialCards = (partialCards.push(card), partialCards) %}
+
+  {% elif prog.status == "opted-out" %}
+    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set optedOutCards = (optedOutCards.push(card), optedOutCards) %}
   {% endif %}
-
-  {% if upcoming | length %}
-    <h2>Upcoming</h2>
-    {% for prog in upcoming %}
-      {{ prog.name }}
-    {% endfor %}
-  {% endif %}
-
-  {% if unknown | length %}
-    <h2>Check if you're eligible</h2>
-    {% for prog in unknown %}
-      {{ prog.name }}
-    {% endfor %}
-  {% endif %}
-
-  {% if done | length %}
-    <h2>Done</h2>
-    {% for prog in done %}
-      {{ prog.name }}
-    {% endfor %}
-  {% endif %}
-
-  {% if optedOut | length %}
-    <h2>Opted out</h2>
-    {% for prog in optedOut %}
-      {{ prog.name }}
-    {% endfor %}
-  {% endif %}
-
-  {% if programmes | length == 0 %}
-    <p>You have no upcoming screening or vaccinations.</p>
-  {% endif %}
-
-  {% for proxy in proxies %}
-    <h2>{{ proxy.id }}’s vaccines and health checks</h2>
-    {% for prog in proxy.programmes %}
-      {{ prog.name }}
-    {% endfor %}
-  {% endfor %}
-{% endset %}
+{% endfor %}
 
 {% block content %}
 
@@ -72,14 +76,67 @@
         {{ pageHeading | safe }}
       </h1>
       <p>
-        Ways to stay healthy, and by stopping illness or catching it early.
+        Look after your health by stopping or catching illness early.
       </p>
 
-      {{ vaccsAndScreening | safe }}
+      {% if dueCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "Due now",
+          cards: dueCards
+        }) }}
+      {% endif %}
 
-      </div>
+      {% if upcomingCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "Upcoming",
+          cards: upcomingCards
+        }) }}
+      {% endif %}
+
+      {% if partialCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "In progress",
+          cards: partialCards
+        }) }}
+      {% endif %}
+
+      {% if unknownCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "Check if you’re eligible",
+          cards: unknownCards
+        }) }}
+      {% endif %}
+
+      {% if optedOutCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "Opted out",
+          cards: optedOutCards
+        }) }}
+      {% endif %}
+
+      {% if completeCards.length %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          heading: "Past",
+          cards: completeCards
+        }) }}
+      {% endif %}
+
+      {# Proxy (dependents) vaccines and health checks
+      {% for proxy in proxies %}
+        <h2>{{ proxy.id }}'s vaccines and health checks</h2>
+        {% for prog in proxy.programmes %}
+          {{ prog.name }}
+        {% endfor %}
+      {% endfor %}
+      #}
 
     </div>
   </div>
 
-  {% endblock %}
+{% endblock %}

@@ -5,131 +5,95 @@
 {% set backLink = true %}
 {% set backLinkURL = "/pages/home-p9" %}
 
-{% set pageHeading %}
-  Your vaccines and health&nbsp;checks
-{% endset %}
-{% set pageDescription = "Your upcoming and past vaccines and health checks" %}
-
-{% set dueCards = [] %}
-{% set upcomingCards = [] %}
-{% set unknownCards = [] %}
-{% set completeCards = [] %}
-{% set partialCards = [] %}
-{% set optedOutCards = [] %}
-
-{% for prog in programmes %}
-  {% set description = prog.scheduleDescription %}
-  {% set card = { title: prog.name, href: "#", description: description } %}
-
-  {% if prog.status == "due" %}
-    {% if prog.overdueBy %}
-      {% set description = prog.overdueBy | formatOverdue %}
-    {% elif prog.lastDate %}
-      {% set description = "You had this " + prog.lastDate | relativeDate %}
-    {% endif %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
-    {% set dueCards = (dueCards.push(card), dueCards) %}
-
-  {% elif prog.status == "upcoming" %}
-    {% if prog.nextDueDate %}
-      {% set description = "Due: " + prog.nextDueDate | relativeDate %}
-    {% endif %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
-    {% set upcomingCards = (upcomingCards.push(card), upcomingCards) %}
-
-  {% elif prog.status == "unknown" %}
-    {% if prog.eligibilityReasons.length %}
-      {% set description = "You may be eligible because " + prog.eligibilityReasons | join(" and ") %}
-    {% endif %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
-    {% set unknownCards = (unknownCards.push(card), unknownCards) %}
-
-  {% elif prog.status == "complete" %}
-    {% if prog.lastDate %}
-      {% set description = "<br> You had this " + prog.lastDate | relativeDate %}
-      {% if prog.nextDueDate %}
-        {% set description = description + "<br> Next due " + prog.nextDueDate | relativeDate %}
-      {% endif %}
-    {% endif %}
-    {% set card = { title: prog.name, href: "#", descriptionHtml: description } %}
-    {% set completeCards = (completeCards.push(card), completeCards) %}
-
-  {% elif prog.status == "partial" %}
-    {% if prog.lastDate %}
-      {% set description = "Last dose " + prog.lastDate | relativeDate %}
-      {% if prog.doses and prog.requiredDoses %}
-        {% set description = description + " (" + prog.doses + " of " + prog.requiredDoses + " doses)" %}
-      {% endif %}
-    {% endif %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
-    {% set partialCards = (partialCards.push(card), partialCards) %}
-
-  {% elif prog.status == "opted-out" %}
-    {% set card = { title: prog.name, href: "#", description: "You have opted out" } %}
-    {% set optedOutCards = (optedOutCards.push(card), optedOutCards) %}
-  {% endif %}
-{% endfor %}
+{% set pageHeading = "Vaccines and health checks" %}
+{% set pageDescription = "What you need to book, what's coming up, and what you've had" %}
 
 {% block content %}
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
-        {{ pageHeading | safe }}
+        {{ pageHeading }}
       </h1>
       <p>
-        Look after your health by stopping or catching illness early.
+        Stay on top of your health by getting vaccines and screening when they're due.
       </p>
 
-      {% if dueCards.length %}
+
+      {# Action needed — things to book now         #}
+
+      {% if grouped.actionNeeded.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.actionNeeded %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
         {{ nhsappCardGroup({
           stacked: true,
           heading: "Book now",
-          cards: dueCards
+          cards: cards
         }) }}
       {% endif %}
 
-      {% if upcomingCards.length %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "Upcoming",
-          cards: upcomingCards
-        }) }}
-      {% endif %}
 
-      {% if partialCards.length %}
+      {# In progress — multi-dose, not finished     #}
+
+      {% if grouped.inProgress.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.inProgress %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
         {{ nhsappCardGroup({
           stacked: true,
           heading: "In progress",
-          cards: partialCards
+          cards: cards
         }) }}
       {% endif %}
 
-      {% if unknownCards.length %}
+
+      {# Upcoming — not due yet but will be         #}
+
+      {% if grouped.upcoming.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.upcoming %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
         {{ nhsappCardGroup({
           stacked: true,
-          heading: "Check if you’re eligible",
-          cards: unknownCards
+          heading: "Coming up",
+          cards: cards
         }) }}
       {% endif %}
 
-      {% if optedOutCards.length %}
+
+      {# Check eligibility — we don't have the data #}
+
+      {% if grouped.checkEligibility.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.checkEligibility %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
         {{ nhsappCardGroup({
           stacked: true,
-          heading: "Opted out",
-          cards: optedOutCards
+          heading: "Check if these are available to you",
+          cards: cards
         }) }}
       {% endif %}
 
-      {% if completeCards.length %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "Past",
-          cards: completeCards
-        }) }}
-      {% endif %}
 
-      {# To do proxy vaccines and health checks #}
+      {# Links to other screens                     #}
+
+      <ul class="nhsuk-list nhsuk-u-margin-top-6">
+        {% if grouped.upToDate.length %}
+          <li>
+            <a href="/pages/your-health/vaccines-and-health-checks-history">Up to date ({{ grouped.upToDate.length }})</a>
+          </li>
+        {% endif %}
+        {% if grouped.optedOut.length %}
+          <li>
+            <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things you've opted out of ({{ grouped.optedOut.length }})</a>
+          </li>
+        {% endif %}
+      </ul>
 
     </div>
   </div>

@@ -1,0 +1,38 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Up to date" %}
+{% set pageDescription = "Vaccines and screening you've had" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading }}
+      </h1>
+      <p>
+        These are vaccines and health checks you've had and don't need again yet.
+      </p>
+
+      {% if grouped.upToDate.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.upToDate %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          cards: cards
+        }) }}
+      {% else %}
+        <p>You have no completed vaccines or health checks to show.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,95 +1,89 @@
-// personas.js
+
 module.exports = [
   {
-    // Margaret is a demo persona designed to show as many states as possible
+    // Margaret: demo persona showing as many states as possible
     id: "Margaret",
     lastName: "Davies",
     dateOfBirth: "1960-03-15", // 65 years old
     sex: "female",
 
-    // health conditions
-    diabetes: true, // Diabetic eye screening
-    smoker: false, // Lung cancer screening
-    exSmoker: true, // Lung cancer screening (ex-smoker eligible)
-    pregnant: false, // Flu, whooping cough, RSV vaccines
+    conditions: {
+      diabetes: true,           // confirmed — triggers diabetic eye screening
+      smoker: false,            // confirmed not a current smoker
+      exSmoker: true,           // confirmed — triggers lung screening
+      pregnant: false,          // confirmed
+      clinicalRiskGroup: true,  // confirmed — triggers flu, pneumococcal
+      carer: undefined,         // we don’t know — should show "check eligibility" for flu
+      immunosuppressed: true,   // confirmed — triggers flu, pneumococcal, shingles, COVID
+      careHomeResident: false   // confirmed
+    },
 
-    // vaccine eligibility
-    clinicalRiskGroup: true, // Flu, pneumococcal vaccines (due to diabetes)
-    carer: false, // Flu vaccine
-    immunosuppressed: true, // Flu, pneumococcal, shingles, COVID vaccines
-    careHomeResident: false, // COVID vaccine
-
-    // screening and vaccination history, all states:
-    // - complete: has lastDate and not yet due
-    // - due: no history OR interval has passed
-    // - partial: multi-dose vaccine with incomplete doses
-    // - opted-out: explicitly declined
     history: {
-      // COMPLETE - recently done, not due yet
-      "bowel-cancer": { lastDate: "2025-01-10" }, // Every 2 years, due 2027
-      "flu-vaccine": { lastDate: "2024-10-05" }, // Annual, due autumn 2025
-      "covid-vaccine": { optedOut: true },
+      // COMPLETE — recently done, not due yet
+      "bowel-cancer":            { lastDate: "2025-01-10" },
+      "flu-vaccine":             { lastDate: "2024-10-05" },
 
-      // DUE - interval has passed
-      "breast-cancer": { lastDate: "2021-06-15" }, // Every 3 years, overdue since 2024
-      "diabetic-eye-screening": { lastDate: "2024-01-20" }, // Annual, overdue
+      // DUE — interval has passed
+      "breast-cancer":           { lastDate: "2021-06-15" },
+      "diabetic-eye-screening":  { lastDate: "2024-01-20" },
 
-      // DUE - never had (no history entry)
-      // pneumococcal-vaccine: one-time, never had
-      // lung-screening: eligible as ex-smoker, never had
+      // DUE — never had (no entry = never had)
+      // "pneumococcal-vaccine": — missing, so treated as never had
+      // "lung-screening":       — missing, so treated as never had
 
-      // PARTIAL - multi-dose vaccine incomplete
-      "shingles-vaccine": { lastDate: "2024-09-01", doses: 1 }, // Needs 2 doses, only had 1
+      // PARTIAL — multi-dose incomplete
+      "shingles-vaccine":        { lastDate: "2024-09-01", doses: 1 },
 
       // OPTED OUT
-      "cervical-screening": { optedOut: true }
+      "cervical-screening":      { optedOut: true },
+      "covid-vaccine":           { optedOut: true }
     }
   },
+
   {
+    // Raam: young man with diabetes
     id: "Raam",
     lastName: "Sharma",
     dateOfBirth: "2000-07-22", // 25 years old
     sex: "male",
 
-    // health conditions
-    diabetes: true, // Diabetic eye screening
-    smoker: false, // Lung cancer screening
-    exSmoker: false, // Lung cancer screening
-    pregnant: false, // Flu, whooping cough, RSV vaccines
+    conditions: {
+      diabetes: true,            // confirmed
+      smoker: false,             // confirmed
+      exSmoker: false,           // confirmed
+      pregnant: false,           // n/a but set for consistency
+      clinicalRiskGroup: true,   // confirmed (because of diabetes)
+      carer: undefined,          // we don’t know
+      immunosuppressed: false,   // confirmed
+      careHomeResident: false    // confirmed
+    },
 
-    // vaccine eligibility
-    clinicalRiskGroup: true, // Flu, pneumococcal vaccines (true because diabetes)
-    carer: false, // Flu vaccine
-    immunosuppressed: false, // Flu, pneumococcal, shingles, COVID vaccines
-    careHomeResident: false, // COVID vaccine
-
-    // screening and vaccination history (lastDate implies completed)
     history: {
-      "diabetic-eye-screening": { lastDate: "2025-01-10" }, // Annual, due 2026
-      "flu-vaccine": { lastDate: "2024-10-12" } // Annual, due autumn 2025
+      "diabetic-eye-screening":  { lastDate: "2025-01-10" },
+      "flu-vaccine":             { lastDate: "2024-10-12" }
     }
   },
+
   {
+    // Amelia: healthy 35-year-old with a child
     id: "Amelia",
     lastName: "Johnson",
     dateOfBirth: "1990-11-08", // 35 years old
     sex: "female",
 
-    // health conditions
-    diabetes: false, // Diabetic eye screening
-    smoker: false, // Lung cancer screening
-    exSmoker: false, // Lung cancer screening
-    pregnant: false, // Flu, whooping cough, RSV vaccines
+    conditions: {
+      diabetes: false,
+      smoker: false,
+      exSmoker: false,
+      pregnant: false,
+      clinicalRiskGroup: false,
+      carer: undefined,          // we don’t know
+      immunosuppressed: false,
+      careHomeResident: false
+    },
 
-    // vaccine eligibility
-    clinicalRiskGroup: false, // Flu, pneumococcal vaccines
-    carer: false, // Flu vaccine
-    immunosuppressed: false, // Flu, pneumococcal, shingles, COVID vaccines
-    careHomeResident: false, // COVID vaccine
-
-    // screening and vaccination history (lastDate implies completed)
     history: {
-      "cervical-screening": { lastDate: "2020-03-15" } // 5 year interval, overdue
+      "cervical-screening":      { lastDate: "2020-03-15" }
     },
 
     proxies: [
@@ -99,29 +93,19 @@ module.exports = [
         dateOfBirth: "2022-08-20", // 3 years old
         sex: "male",
 
-        // health conditions
-        diabetes: false, // Diabetic eye screening
-        clinicalRiskGroup: false, // Flu vaccine
-        immunosuppressed: false, // Flu vaccine
-        learningDisability: false, // Annual health check
+        conditions: {
+          diabetes: false,
+          clinicalRiskGroup: false,
+          immunosuppressed: false
+        },
 
-        // vaccine eligibility
-        highTbRiskArea: false, // BCG vaccine
-        parentFromHighTbCountry: false, // BCG vaccine
-        motherHepB: false, // Hepatitis B vaccine at birth
-
-        // birth factors (may affect schedule timing)
-        premature: false, // May affect vaccine schedule
-        birthWeeksGestation: 40, // Used to calculate adjusted age for vaccines
-
-        // vaccination history (lastDate implies completed, doses tracked for multi-dose vaccines)
         history: {
-          "6-in-1-vaccine": { lastDate: "2023-01-15", doses: 3 },
-          "rotavirus-vaccine": { lastDate: "2022-12-20", doses: 2 },
-          "menb-vaccine": { lastDate: "2023-08-20", doses: 3 },
-          "pcv-vaccine": { lastDate: "2023-08-20", doses: 2 },
-          "mmr-vaccine": { lastDate: "2023-08-25", doses: 1 }, // Needs 2nd dose at 3y4m
-          "flu-vaccine-child": { lastDate: "2024-10-01" } // Annual
+          "6-in-1-vaccine":      { lastDate: "2023-01-15", doses: 3 },
+          "rotavirus-vaccine":   { lastDate: "2022-12-20", doses: 2 },
+          "menb-vaccine":        { lastDate: "2023-08-20", doses: 3 },
+          "pcv-vaccine":         { lastDate: "2023-08-20", doses: 2 },
+          "mmr-vaccine":         { lastDate: "2023-08-25", doses: 1 },
+          "flu-vaccine-child":   { lastDate: "2024-10-01" }
         }
       }
     ]

@@ -1,0 +1,38 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Things you've opted out of" %}
+{% set pageDescription = "Vaccines and screening you've chosen not to have" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading }}
+      </h1>
+      <p>
+        You can opt back in at any time.
+      </p>
+
+      {% if grouped.optedOut.length %}
+        {% set cards = [] %}
+        {% for prog in grouped.optedOut %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
+        {% endfor %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          cards: cards
+        }) }}
+      {% else %}
+        <p>You have not opted out of any vaccines or health checks.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

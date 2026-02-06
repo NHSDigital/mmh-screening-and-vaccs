@@ -35,40 +35,63 @@ function checkIfDue (person, prog, today = getToday()) {
   const history = person.history && person.history[prog.id]
 
   // No history - due if eligible
-  if (!history || !history.lastDate) {
-    return { isDue: true, lastDate: null, nextDueDate: null }
+  if (!history) {
+    return { isDue: true, hasHistory: false, lastDate: null, nextDueDate: null }
+  }
+
+  // Opted out
+  if (history.optedOut) {
+    return { isOptedOut: true, hasHistory: true }
+  }
+
+  // Has history entry but no lastDate - due if eligible
+  if (!history.lastDate) {
+    return { isDue: true, hasHistory: false, lastDate: null, nextDueDate: null }
   }
 
   const lastDate = new Date(history.lastDate)
+  const requiredDoses = prog.schedule.doses || 1
+  const givenDoses = history.doses || 1
+  const isPartial = givenDoses < requiredDoses
 
-  // One-time programmes - if done, not due again
-  if (prog.schedule.type === 'one-time') {
-    return { isDue: false, lastDate: history.lastDate, nextDueDate: null, status: history.status }
+  // Multi-dose vaccines that aren't complete yet
+  if (isPartial) {
+    return {
+      isDue: true,
+      isPartial: true,
+      hasHistory: true,
+      lastDate: history.lastDate,
+      nextDueDate: null,
+      doses: givenDoses,
+      requiredDoses
+    }
   }
 
-  // Calculate next due date based on schedule type
+  // Calculate next due date if intervalYears exists, otherwise one-time (not due again)
   let nextDueDate = null
+  let overdueBy = null
 
-  if (prog.schedule.type === 'interval' && prog.schedule.intervalYears) {
+  if (prog.schedule.intervalYears) {
     nextDueDate = new Date(lastDate)
     nextDueDate.setFullYear(nextDueDate.getFullYear() + prog.schedule.intervalYears)
-  } else if (prog.schedule.type === 'annual') {
-    nextDueDate = new Date(lastDate)
-    nextDueDate.setFullYear(nextDueDate.getFullYear() + 1)
-  } else if (prog.schedule.type === 'seasonal') {
-    // Seasonal vaccines are due each season (e.g., autumn)
-    nextDueDate = new Date(lastDate)
-    nextDueDate.setFullYear(nextDueDate.getFullYear() + 1)
+
+    // Calculate how overdue if past due date
+    if (today >= nextDueDate) {
+      const diffTime = today - nextDueDate
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      overdueBy = { days: diffDays }
+    }
   }
 
   const isDue = nextDueDate ? today >= nextDueDate : false
 
   return {
     isDue,
+    hasHistory: true,
     lastDate: history.lastDate,
     nextDueDate: nextDueDate ? nextDueDate.toISOString().split('T')[0] : null,
-    status: history.status,
-    doses: history.doses
+    overdueBy,
+    doses: givenDoses
   }
 }
 
@@ -128,13 +151,19 @@ function filterProgrammes (person, today = getToday()) {
       // Check due status based on history and schedule
       const dueInfo = checkIfDue(person, prog, today)
 
+      // Simplified status logic:
+      // - opted-out: user has explicitly opted out
+      // - partial: has history but doses < required
+      // - due: no history, or interval has passed
+      // - complete: has history and not due yet
+      // - unknown: not eligible by age or conditions
       let status
-      if (dueInfo.status === 'partial') {
-        status = 'partial'
-      } else if (dueInfo.status === 'opted-out') {
+      if (dueInfo.isOptedOut) {
         status = 'opted-out'
       } else if (!ageOk && !otherOk) {
         status = 'unknown'
+      } else if (dueInfo.isPartial) {
+        status = 'partial'
       } else if (dueInfo.isDue) {
         status = 'due'
       } else {
@@ -147,7 +176,9 @@ function filterProgrammes (person, today = getToday()) {
         eligibilityReasons,
         lastDate: dueInfo.lastDate,
         nextDueDate: dueInfo.nextDueDate,
-        doses: dueInfo.doses
+        overdueBy: dueInfo.overdueBy,
+        doses: dueInfo.doses,
+        requiredDoses: dueInfo.requiredDoses
       }
     })
 }

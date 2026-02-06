@@ -7,10 +7,7 @@ module.exports = [
     minAge: 50,
     maxAge: 74,
     sex: "all",
-    schedule: {
-      type: "interval",
-      intervalYears: 2
-    },
+    schedule: { intervalYears: 2 },
     scheduleDescription: "Every 2 years"
   },
   {
@@ -20,10 +17,7 @@ module.exports = [
     minAge: 50,
     maxAge: 71,
     sex: "female",
-    schedule: {
-      type: "interval",
-      intervalYears: 3
-    },
+    schedule: { intervalYears: 3 },
     scheduleDescription: "Every 3 years"
   },
   {
@@ -33,10 +27,7 @@ module.exports = [
     minAge: 25,
     maxAge: 64,
     sex: "female",
-    schedule: {
-      type: "interval",
-      intervalYears: 5
-    },
+    schedule: { intervalYears: 5 },
     scheduleDescription: "Every 5 years"
   },
   {
@@ -46,10 +37,7 @@ module.exports = [
     minAge: 55,
     maxAge: 74,
     sex: "all",
-    schedule: {
-      type: "interval",
-      intervalYears: 2
-    },
+    schedule: { intervalYears: 2 },
     scheduleDescription: "Every 2 years if high risk",
     otherEligibility: {
       mode: "or",
@@ -63,11 +51,7 @@ module.exports = [
     minAge: 12,
     maxAge: null,
     sex: "all",
-    schedule: {
-      type: "interval",
-      intervalYears: 1,
-      intervalYearsLowRisk: 2
-    },
+    schedule: { intervalYears: 1 },
     scheduleDescription: "Annual, or every 2 years if low risk",
     otherEligibility: {
       mode: "and",
@@ -81,9 +65,7 @@ module.exports = [
     minAge: 65,
     maxAge: 65,
     sex: "male",
-    schedule: {
-      type: "one-time"
-    },
+    schedule: {},
     scheduleDescription: "One-time at age 65"
   },
 
@@ -95,11 +77,7 @@ module.exports = [
     minAge: 0,
     maxAge: 1,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 3,
-      agesWeeks: [8, 12, 16]
-    },
+    schedule: { doses: 3 },
     scheduleDescription: "3 doses at 8, 12 and 16 weeks"
   },
   {
@@ -109,12 +87,7 @@ module.exports = [
     minAge: 0,
     maxAge: 1,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 3,
-      agesWeeks: [8, 12],
-      agesMonths: [12]
-    },
+    schedule: { doses: 3 },
     scheduleDescription: "8 and 12 weeks, then booster at 1 year"
   },
   {
@@ -124,11 +97,7 @@ module.exports = [
     minAge: 0,
     maxAge: 0,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 2,
-      agesWeeks: [8, 12]
-    },
+    schedule: { doses: 2 },
     scheduleDescription: "2 doses at 8 and 12 weeks"
   },
   {
@@ -138,12 +107,7 @@ module.exports = [
     minAge: 0,
     maxAge: 1,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 2,
-      agesWeeks: [16],
-      agesMonths: [12]
-    },
+    schedule: { doses: 2 },
     scheduleDescription: "16 weeks, then booster at 1 year"
   },
   {
@@ -153,11 +117,7 @@ module.exports = [
     minAge: 1,
     maxAge: 5,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 2,
-      agesMonths: [12, 40]
-    },
+    schedule: { doses: 2 },
     scheduleDescription: "1 year, then 3 years 4 months"
   },
   {
@@ -167,11 +127,7 @@ module.exports = [
     minAge: 3,
     maxAge: 5,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 1,
-      agesMonths: [40]
-    },
+    schedule: {},
     scheduleDescription: "Single dose at 3 years 4 months"
   },
 
@@ -183,9 +139,7 @@ module.exports = [
     minAge: 2,
     maxAge: 16,
     sex: "all",
-    schedule: {
-      type: "annual"
-    },
+    schedule: { intervalYears: 1 },
     scheduleDescription: "Annual (nasal spray)"
   },
   {
@@ -195,11 +149,7 @@ module.exports = [
     minAge: 12,
     maxAge: 25,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 1,
-      agesYears: [12]
-    },
+    schedule: {},
     scheduleDescription: "Single dose in Year 8"
   },
   {
@@ -209,11 +159,7 @@ module.exports = [
     minAge: 14,
     maxAge: 14,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 1,
-      agesYears: [14]
-    },
+    schedule: {},
     scheduleDescription: "Single dose in Year 9"
   },
   {
@@ -223,11 +169,7 @@ module.exports = [
     minAge: 14,
     maxAge: 25,
     sex: "all",
-    schedule: {
-      type: "ages",
-      doses: 1,
-      agesYears: [14]
-    },
+    schedule: {},
     scheduleDescription: "Single dose in Year 9"
   },
 
@@ -239,9 +181,7 @@ module.exports = [
     minAge: 65,
     maxAge: null,
     sex: "all",
-    schedule: {
-      type: "annual"
-    },
+    schedule: { intervalYears: 1 },
     scheduleDescription: "Annual (autumn)",
     otherEligibility: {
       mode: "or",
@@ -255,9 +195,7 @@ module.exports = [
     minAge: 65,
     maxAge: null,
     sex: "all",
-    schedule: {
-      type: "one-time"
-    },
+    schedule: {},
     scheduleDescription: "One-time at 65",
     otherEligibility: {
       mode: "or",
@@ -271,11 +209,7 @@ module.exports = [
     minAge: 65,
     maxAge: 80,
     sex: "all",
-    schedule: {
-      type: "one-time",
-      doses: 2,
-      intervalMonths: 6
-    },
+    schedule: { doses: 2 },
     scheduleDescription: "2 doses, 6 months apart",
     otherEligibility: {
       mode: "or",
@@ -289,9 +223,7 @@ module.exports = [
     minAge: 75,
     maxAge: null,
     sex: "all",
-    schedule: {
-      type: "one-time"
-    },
+    schedule: {},
     scheduleDescription: "One-time at 75"
   },
   {
@@ -301,10 +233,7 @@ module.exports = [
     minAge: 75,
     maxAge: null,
     sex: "all",
-    schedule: {
-      type: "seasonal",
-      season: "autumn"
-    },
+    schedule: { intervalYears: 1 },
     scheduleDescription: "Seasonal (autumn)",
     otherEligibility: {
       mode: "or",
@@ -320,9 +249,7 @@ module.exports = [
     minAge: 16,
     maxAge: 50,
     sex: "female",
-    schedule: {
-      type: "per-pregnancy"
-    },
+    schedule: {},
     scheduleDescription: "Once per pregnancy",
     otherEligibility: {
       mode: "and",
@@ -336,10 +263,7 @@ module.exports = [
     minAge: 16,
     maxAge: 50,
     sex: "female",
-    schedule: {
-      type: "per-pregnancy",
-      fromGestationWeeks: 16
-    },
+    schedule: {},
     scheduleDescription: "Once per pregnancy, from 16 weeks",
     otherEligibility: {
       mode: "and",
@@ -353,10 +277,7 @@ module.exports = [
     minAge: 16,
     maxAge: 50,
     sex: "female",
-    schedule: {
-      type: "per-pregnancy",
-      fromGestationWeeks: 28
-    },
+    schedule: {},
     scheduleDescription: "Once per pregnancy, from 28 weeks",
     otherEligibility: {
       mode: "and",

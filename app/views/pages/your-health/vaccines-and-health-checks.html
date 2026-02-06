@@ -22,15 +22,17 @@
   {% set card = { title: prog.name, href: "#", description: description } %}
 
   {% if prog.status == "due" %}
-    {% if prog.lastDate %}
-      {% set description = "You had this " + prog.lastDate | formatDate %}
+    {% if prog.overdueBy %}
+      {% set description = prog.overdueBy | formatOverdue %}
+    {% elif prog.lastDate %}
+      {% set description = "You had this " + prog.lastDate | relativeDate %}
     {% endif %}
     {% set card = { title: prog.name, href: "#", description: description } %}
     {% set dueCards = (dueCards.push(card), dueCards) %}
 
   {% elif prog.status == "upcoming" %}
     {% if prog.nextDueDate %}
-      {% set description = "Due: " + prog.nextDueDate | formatDate %}
+      {% set description = "Due: " + prog.nextDueDate | relativeDate %}
     {% endif %}
     {% set card = { title: prog.name, href: "#", description: description } %}
     {% set upcomingCards = (upcomingCards.push(card), upcomingCards) %}
@@ -44,26 +46,26 @@
 
   {% elif prog.status == "complete" %}
     {% if prog.lastDate %}
-      {% set description = "You had this " + prog.lastDate | formatDate %}
+      {% set description = "<br> You had this " + prog.lastDate | relativeDate %}
       {% if prog.nextDueDate %}
-        {% set description = description + "Next due " + prog.nextDueDate | formatDate %}
+        {% set description = description + "<br> Next due " + prog.nextDueDate | relativeDate %}
       {% endif %}
     {% endif %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set card = { title: prog.name, href: "#", descriptionHtml: description } %}
     {% set completeCards = (completeCards.push(card), completeCards) %}
 
   {% elif prog.status == "partial" %}
     {% if prog.lastDate %}
-      {% set description = "Last dose: " + prog.lastDate | formatDate %}
-      {% if prog.doses %}
-        {% set description = description + " (" + prog.doses + " of " + prog.schedule.doses + " doses)" %}
+      {% set description = "Last dose " + prog.lastDate | relativeDate %}
+      {% if prog.doses and prog.requiredDoses %}
+        {% set description = description + " (" + prog.doses + " of " + prog.requiredDoses + " doses)" %}
       {% endif %}
     {% endif %}
     {% set card = { title: prog.name, href: "#", description: description } %}
     {% set partialCards = (partialCards.push(card), partialCards) %}
 
   {% elif prog.status == "opted-out" %}
-    {% set card = { title: prog.name, href: "#", description: description } %}
+    {% set card = { title: prog.name, href: "#", description: "You have opted out" } %}
     {% set optedOutCards = (optedOutCards.push(card), optedOutCards) %}
   {% endif %}
 {% endfor %}

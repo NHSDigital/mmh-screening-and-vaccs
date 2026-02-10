@@ -8,6 +8,28 @@
 {% set pageHeading = "Vaccines and health checks" %}
 {% set pageDescription = "What you need to book, what's coming up, and what you've had" %}
 
+{% macro programmeCards(programmes, heading) %}
+  {% if programmes.length %}
+    {% set cards = [] %}
+    {% for prog in programmes %}
+      {% set cardHtml %}
+        <div class="nhsapp-card__below">
+          <p class="nhsapp-card__description">{{ prog.description }}</p>
+          {% if prog.statusText and prog.statusText !== prog.description %}
+            <p class="nhsapp-card__description">{{ prog.statusText }}</p>
+          {% endif %}
+        </div>
+      {% endset %}
+      {% set cards = (cards.push({ title: prog.name, href: "#", descriptionHtml: cardHtml }), cards) %}
+    {% endfor %}
+    {{ nhsappCardGroup({
+      stacked: true,
+      heading: heading,
+      cards: cards
+    }) }}
+  {% endif %}
+{% endmacro %}
+
 {% block content %}
 
   <div class="nhsuk-grid-row">
@@ -16,71 +38,16 @@
         {{ pageHeading }}
       </h1>
       <p>
-        Stay on top of your health by getting vaccines and screening when they're due.
+        Look after your health by stopping illness or catching it early.
       </p>
 
-
-      {# Action needed — things to book now         #}
-
-      {% if grouped.actionNeeded.length %}
-        {% set cards = [] %}
-        {% for prog in grouped.actionNeeded %}
-          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
-        {% endfor %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "Book now",
-          cards: cards
-        }) }}
-      {% endif %}
+      {{ programmeCards(grouped.actionNeeded, "Book now") }}
+      {{ programmeCards(grouped.inProgress, "In progress") }}
+      {{ programmeCards(grouped.upcoming, "Coming up") }}
+      {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
 
 
-      {# In progress — multi-dose, not finished     #}
-
-      {% if grouped.inProgress.length %}
-        {% set cards = [] %}
-        {% for prog in grouped.inProgress %}
-          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
-        {% endfor %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "In progress",
-          cards: cards
-        }) }}
-      {% endif %}
-
-
-      {# Upcoming — not due yet but will be         #}
-
-      {% if grouped.upcoming.length %}
-        {% set cards = [] %}
-        {% for prog in grouped.upcoming %}
-          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
-        {% endfor %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "Coming up",
-          cards: cards
-        }) }}
-      {% endif %}
-
-
-      {# Check eligibility — we don't have the data #}
-
-      {% if grouped.checkEligibility.length %}
-        {% set cards = [] %}
-        {% for prog in grouped.checkEligibility %}
-          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.description }), cards) %}
-        {% endfor %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          heading: "Check if these are available to you",
-          cards: cards
-        }) }}
-      {% endif %}
-
-
-      {# Links to other screens                     #}
+      {# Links                                    #}
 
       <ul class="nhsuk-list nhsuk-u-margin-top-6">
         {% if grouped.upToDate.length %}
@@ -94,6 +61,37 @@
           </li>
         {% endif %}
       </ul>
+
+      {# Up to date — debug                          #}
+      {% if grouped.upToDate.length %}
+        <p style="font-size: 14px; color: #666;">
+          <strong>Up to date:</strong><br>
+          {% for prog in grouped.upToDate %}
+            {{ prog.name }}: {{ prog.statusText }} — {{ prog.reasonText }}<br>
+          {% endfor %}
+        </p>
+      {% endif %}
+
+      {# Opted out — debug                          #}
+      {% if grouped.optedOut.length %}
+        <p style="font-size: 14px; color: #666;">
+          <strong>Opted out:</strong><br>
+          {% for prog in grouped.optedOut %}
+            {{ prog.name }}: {{ prog.reasonText }}<br>
+          {% endfor %}
+        </p>
+      {% endif %}
+
+      {# Debug: not eligible                        #}
+      {% if excluded.length %}
+        <hr style="margin-top: 32px;">
+        <p style="font-size: 14px; color: #666;">
+          <strong>Not eligible for ({{ excluded.length }}):</strong><br>
+          {% for prog in excluded %}
+            {{ prog.name }} — {{ prog.reason }}<br>
+          {% endfor %}
+        </p>
+      {% endif %}
 
     </div>
   </div>

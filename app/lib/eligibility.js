@@ -47,7 +47,7 @@ function checkSex (person, eligibility) {
 /**
  * Check condition-based eligibility.
  *
- * Returns one of three results:
+ * Returns:
  *   "eligible"   — all/any required conditions are confirmed true
  *   "ineligible" — all/any required conditions are confirmed false
  *   "unknown"    — at least one condition is undefined (we don't have the data)
@@ -218,7 +218,7 @@ function checkHistory (person, programme, today = getToday()) {
  *   "action-needed"     — book now (due, overdue, or never had)
  *   "in-progress"       — multi-dose vaccine, some doses given
  *   "upcoming"          — not due yet, but will be
- *   "check-eligibility" — we don't have enough data to confirm
+ *   "unknown"           — we don't have enough data to confirm
  *   "up-to-date"        — complete and not due again yet
  *   "opted-out"         — user has opted out
  */
@@ -228,16 +228,30 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
       // Must match sex
       if (!checkSex(person, prog.eligibility)) return false
 
-      // Must be in age range OR eligible by conditions
+      // Upper age limit is always enforced — conditions can make
+      // someone below the minimum age eligible, but never above the max
+      const age = person.dateOfBirth
+        ? calculateAge(person.dateOfBirth, today)
+        : person.age
+      const { max } = prog.eligibility.age
+      if (max !== null && age > max) return false
+
       const ageOk = checkAge(person, prog.eligibility, today)
       const conditionResult = checkConditions(person, prog.eligibility)
 
-      // If conditions are required and all are confirmed false, exclude
-      if (prog.eligibility.conditions && conditionResult === 'ineligible' && !ageOk) {
-        return false
+      // No conditions defined — age is the only criterion
+      if (!prog.eligibility.conditions) return ageOk
+
+      // 'and' mode (e.g. diabetic eye, pregnancy vaccines):
+      // age AND conditions must both be satisfied
+      if (prog.eligibility.conditions.mode === 'and') {
+        if (conditionResult === 'ineligible') return false
+        return ageOk && (conditionResult === 'eligible' || conditionResult === 'unknown')
       }
 
-      // Include if age-eligible, condition-eligible, or condition-unknown
+      // 'or' mode (e.g. flu, shingles, COVID):
+      // age alone OR conditions alone can qualify
+      if (conditionResult === 'ineligible' && !ageOk) return false
       return ageOk || conditionResult === 'eligible' || conditionResult === 'unknown'
     })
     .map(prog => {
@@ -253,33 +267,37 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
       if (historyInfo.status === 'opted-out') {
         displayStatus = 'opted-out'
 
-      } else if (conditionResult === 'unknown' && !ageOk && historyInfo.status === 'never-had') {
-        // We don't have enough data AND they're not age-eligible AND never had it
-        displayStatus = 'check-eligibility'
-
-      } else if (historyInfo.status === 'partial') {
-        displayStatus = 'in-progress'
-
-      } else if (historyInfo.status === 'never-had' || historyInfo.status === 'overdue') {
-        displayStatus = 'action-needed'
-
-      } else if (historyInfo.status === 'upcoming') {
-        displayStatus = 'upcoming'
-
-      } else {
-        displayStatus = 'up-to-date'
+      } else if (conditionResult === 'unknown') {
+        // Check if unknown conditions genuinely affect eligibility
+        const condMode = prog.eligibility.conditions && prog.eligibility.conditions.mode
+        if (condMode === 'and' || !ageOk) {
+          // 'and' mode: conditions are required alongside age — we can't confirm
+          // 'or' mode but not age-eligible: conditions are the only path — we can't confirm
+          displayStatus = 'unknown'
+        }
       }
 
-      // Build the description text using the programme's message templates
-      const description = buildDescription(prog, displayStatus, historyInfo, eligibilityReasons, unknownConditions)
+      if (!displayStatus) {
+        if (historyInfo.status === 'partial') {
+          displayStatus = 'in-progress'
+        } else if (historyInfo.status === 'never-had' || historyInfo.status === 'overdue') {
+          displayStatus = 'action-needed'
+        } else if (historyInfo.status === 'upcoming') {
+          displayStatus = 'upcoming'
+        } else {
+          displayStatus = 'up-to-date'
+        }
+      }
+
+      const statusText = buildDescription(prog, displayStatus, historyInfo)
 
       return {
         id: prog.id,
         name: prog.name,
         type: prog.type,
+        description: prog.description,
         displayStatus,
-        description,
-        // Pass through raw data for the template if needed
+        statusText,
         lastDate: historyInfo.lastDate,
         nextDueDate: historyInfo.nextDueDate,
         overdueDays: historyInfo.overdueDays,
@@ -295,47 +313,43 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
 // Description builder
 // -------------------------------------------------------
 
-function buildDescription (prog, displayStatus, historyInfo, eligibilityReasons, unknownConditions) {
-  const messages = prog.messages
+function buildDescription (prog, displayStatus, historyInfo) {
+  const messages = prog.messages || {}
 
   switch (displayStatus) {
     case 'action-needed':
-      if (historyInfo.status === 'overdue' && messages.overdue) {
-        return messages.overdue(formatOverdueDays(historyInfo.overdueDays))
+      if (historyInfo.status === 'overdue') {
+        return messages.overdue
+          ? messages.overdue(formatOverdueDays(historyInfo.overdueDays))
+          : `Due ${formatOverdueDays(historyInfo.overdueDays)} ago`
       }
-      if (historyInfo.status === 'never-had' && messages.neverHad) {
-        return messages.neverHad
+      if (historyInfo.status === 'never-had' && prog.type === 'screening') {
+        return 'You have not had this screening before'
       }
-      return messages.dueSub || messages.due
+      return prog.description
 
     case 'in-progress':
-      if (messages.partial) {
-        return messages.partial(historyInfo.doses, historyInfo.requiredDoses)
-      }
-      return `${historyInfo.doses} of ${historyInfo.requiredDoses} doses given`
+      return messages.partial
+        ? messages.partial(historyInfo.doses, historyInfo.requiredDoses)
+        : `${historyInfo.doses} of ${historyInfo.requiredDoses} doses given`
 
     case 'upcoming':
-      if (messages.upcoming && historyInfo.nextDueDate) {
-        return messages.upcoming(formatRelativeDate(historyInfo.nextDueDate))
-      }
-      return `Next due ${formatRelativeDate(historyInfo.nextDueDate)}`
+      return messages.upcoming
+        ? messages.upcoming(formatRelativeDate(historyInfo.nextDueDate))
+        : `Next due ${formatRelativeDate(historyInfo.nextDueDate)}`
 
-    case 'check-eligibility':
-      if (messages.checkEligibility) {
-        return messages.checkEligibility
-      }
-      if (unknownConditions.length) {
-        return `This may be available to you. We do not have enough information to confirm.`
-      }
-      return 'Check if this is available to you.'
+    case 'unknown':
+      return messages.checkEligibility
+        || 'This may be available to you. We do not have enough information to confirm.'
 
     case 'up-to-date':
       if (messages.complete) {
-        if (typeof messages.complete === 'function') {
-          return messages.complete(formatRelativeDate(historyInfo.lastDate))
-        }
-        return messages.complete
+        return typeof messages.complete === 'function'
+          ? messages.complete(formatRelativeDate(historyInfo.lastDate))
+          : messages.complete
       }
+      if (prog.schedule.type === 'multi-dose') return 'All doses given'
+      if (historyInfo.lastDate) return `You had this ${formatRelativeDate(historyInfo.lastDate)}`
       return 'Up to date'
 
     case 'opted-out':

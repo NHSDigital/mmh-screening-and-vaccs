@@ -10,7 +10,7 @@ const router = express.Router()
 
 const programmes = require('./data/screening-and-vaccines')
 const personas = require('./data/personas')
-const { calculateAge, getProgrammesForPerson, getToday } = require('./lib/eligibility')
+const { calculateAge, getProgrammesForPerson, getToday, checkAge, checkSex, checkConditions } = require('./lib/eligibility')
 
 // -------------------------------------------------------
 // Middleware: set current persona
@@ -45,10 +45,74 @@ function getGroupedProgrammes (persona, today) {
     actionNeeded:     userProgrammes.filter(p => p.displayStatus === 'action-needed'),
     inProgress:       userProgrammes.filter(p => p.displayStatus === 'in-progress'),
     upcoming:         userProgrammes.filter(p => p.displayStatus === 'upcoming'),
-    checkEligibility: userProgrammes.filter(p => p.displayStatus === 'check-eligibility'),
+    unknown: userProgrammes.filter(p => p.displayStatus === 'unknown'),
     upToDate:         userProgrammes.filter(p => p.displayStatus === 'up-to-date'),
     optedOut:         userProgrammes.filter(p => p.displayStatus === 'opted-out')
   }
+}
+
+// Debug: add reason text to each included programme
+function addReasonText (grouped, persona, today) {
+  const age = persona.dateOfBirth ? calculateAge(persona.dateOfBirth, today) : persona.age
+  const allProgs = [
+    ...grouped.actionNeeded,
+    ...grouped.inProgress,
+    ...grouped.upcoming,
+    ...grouped.unknown,
+    ...grouped.upToDate,
+    ...grouped.optedOut
+  ]
+  for (const prog of allProgs) {
+    const rawProg = programmes.find(p => p.id === prog.id)
+    const reasons = []
+    if (checkAge(persona, rawProg.eligibility, today)) {
+      const { min, max } = rawProg.eligibility.age
+      reasons.push('age ' + age + ' is within ' + min + '–' + (max === null ? 'no limit' : max))
+    }
+    if (prog.eligibilityReasons.length) {
+      reasons.push(prog.eligibilityReasons.join(', '))
+    }
+    if (prog.unknownConditions.length) {
+      reasons.push('unknown: ' + prog.unknownConditions.join(', '))
+    }
+    prog.reasonText = reasons.join(' + ') || 'no specific reason'
+  }
+}
+
+// Debug: get programmes the person is NOT eligible for
+function getExcludedProgrammes (persona, grouped, today) {
+  const age = persona.dateOfBirth ? calculateAge(persona.dateOfBirth, today) : persona.age
+  const includedIds = new Set([
+    ...grouped.actionNeeded,
+    ...grouped.inProgress,
+    ...grouped.upcoming,
+    ...grouped.unknown,
+    ...grouped.upToDate,
+    ...grouped.optedOut
+  ].map(p => p.id))
+
+  return programmes
+    .filter(p => !includedIds.has(p.id))
+    .map(prog => {
+      const reasons = []
+      if (!checkSex(persona, prog.eligibility)) {
+        reasons.push('sex is ' + persona.sex + ' (needs ' + prog.eligibility.sex + ')')
+      }
+      const { min, max } = prog.eligibility.age
+      if (age < min) {
+        reasons.push('age ' + age + ' below min ' + min)
+      } else if (max !== null && age > max) {
+        reasons.push('age ' + age + ' above max ' + max)
+      }
+      const condResult = checkConditions(persona, prog.eligibility)
+      if (condResult === 'ineligible' && prog.eligibility.conditions) {
+        reasons.push('conditions not met')
+      }
+      return {
+        name: prog.name,
+        reason: reasons.join(', ')
+      }
+    })
 }
 
 router.get('/pages/your-health/vaccines-and-health-checks', (req, res) => {
@@ -57,6 +121,8 @@ router.get('/pages/your-health/vaccines-and-health-checks', (req, res) => {
   const today = getToday()
 
   const grouped = getGroupedProgrammes(persona, today)
+  addReasonText(grouped, persona, today)
+  const excluded = getExcludedProgrammes(persona, grouped, today)
 
   // Build proxies (children managed by this person)
   const proxies = (persona.proxies || []).map(proxy => ({
@@ -73,6 +139,7 @@ router.get('/pages/your-health/vaccines-and-health-checks', (req, res) => {
     personas,
     today: today.toISOString().split('T')[0],
     grouped,
+    excluded,
     proxies
   })
 })

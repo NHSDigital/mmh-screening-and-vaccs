@@ -143,6 +143,15 @@ function checkHistory (person, programme, today = getToday()) {
   }
 
   const lastDate = new Date(history.lastDate)
+  const isInFuture = lastDate > today
+
+  // Future date = booked appointment, regardless of schedule type
+  if (isInFuture) {
+    return {
+      status: 'booked',
+      lastDate: history.lastDate
+    }
+  }
 
   // Multi-dose: check if all doses given
   if (schedule.type === 'multi-dose') {
@@ -282,6 +291,8 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
           displayStatus = 'in-progress'
         } else if (historyInfo.status === 'never-had' || historyInfo.status === 'overdue') {
           displayStatus = 'action-needed'
+        } else if (historyInfo.status === 'booked') {
+          displayStatus = 'booked'
         } else if (historyInfo.status === 'upcoming') {
           displayStatus = 'upcoming'
         } else {
@@ -332,6 +343,11 @@ function buildDescription (prog, displayStatus, historyInfo) {
       return messages.partial
         ? messages.partial(historyInfo.doses, historyInfo.requiredDoses)
         : `${historyInfo.doses} of ${historyInfo.requiredDoses} doses given`
+
+    case 'booked':
+      return new Date(historyInfo.lastDate)
+        .toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+        .replace(',', '')
 
     case 'upcoming':
       return messages.upcoming

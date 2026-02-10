@@ -10,6 +10,7 @@ const router = express.Router()
 
 const programmes = require('./data/screening-and-vaccines')
 const personas = require('./data/personas')
+const locations = require('./data/locations')
 const { calculateAge, getProgrammesForPerson, getToday, checkAge, checkSex, checkConditions } = require('./lib/eligibility')
 
 // -------------------------------------------------------
@@ -45,6 +46,7 @@ function getGroupedProgrammes (persona, today) {
     actionNeeded:     userProgrammes.filter(p => p.displayStatus === 'action-needed')
                         .sort((a, b) => (b.overdueDays || 0) - (a.overdueDays || 0)),
     inProgress:       userProgrammes.filter(p => p.displayStatus === 'in-progress'),
+    booked:           userProgrammes.filter(p => p.displayStatus === 'booked'),
     upcoming:         userProgrammes.filter(p => p.displayStatus === 'upcoming'),
     unknown: userProgrammes.filter(p => p.displayStatus === 'unknown'),
     upToDate:         userProgrammes.filter(p => p.displayStatus === 'up-to-date'),
@@ -58,6 +60,7 @@ function addReasonText (grouped, persona, today) {
   const allProgs = [
     ...grouped.actionNeeded,
     ...grouped.inProgress,
+    ...grouped.booked,
     ...grouped.upcoming,
     ...grouped.unknown,
     ...grouped.upToDate,
@@ -86,6 +89,7 @@ function getExcludedProgrammes (persona, grouped, today) {
   const includedIds = new Set([
     ...grouped.actionNeeded,
     ...grouped.inProgress,
+    ...grouped.booked,
     ...grouped.upcoming,
     ...grouped.unknown,
     ...grouped.upToDate,
@@ -174,6 +178,109 @@ router.get('/pages/your-health/vaccines-and-health-checks-opted-out', (req, res)
       age: persona.dateOfBirth ? calculateAge(persona.dateOfBirth, today) : persona.age
     },
     grouped
+  })
+})
+
+// -------------------------------------------------------
+// Booking flow
+// -------------------------------------------------------
+
+// Dummy appointment slots
+const dummyAppointments = [
+  {
+    date: 'Monday 17 February 2026',
+    slots: [
+      { time: '9:00am' },
+      { time: '9:30am' },
+      { time: '11:00am' }
+    ]
+  },
+  {
+    date: 'Tuesday 18 February 2026',
+    slots: [
+      { time: '8:30am' },
+      { time: '10:00am' },
+      { time: '2:30pm' }
+    ]
+  },
+  {
+    date: 'Wednesday 19 February 2026',
+    slots: [
+      { time: '9:00am' },
+      { time: '11:30am' },
+      { time: '3:00pm' }
+    ]
+  }
+]
+
+// Helper: look up programme by ID or 404
+function findProgramme (req, res) {
+  const programme = programmes.find(p => p.id === req.params.programmeId)
+  if (!programme) {
+    res.status(404).send('Programme not found')
+    return null
+  }
+  return programme
+}
+
+// Step 1: Find a location
+router.get('/pages/your-health/book/:programmeId/find-location', (req, res) => {
+  const programme = findProgramme(req, res)
+  if (!programme) return
+
+  const filteredLocations = locations.filter(loc =>
+    (programme.settings || []).includes(loc.type)
+  )
+
+  res.render('pages/your-health/book/find-location', {
+    programme,
+    locations: filteredLocations
+  })
+})
+
+// Step 2: Choose an appointment
+router.post('/pages/your-health/book/:programmeId/choose-appointment', (req, res) => {
+  const programme = findProgramme(req, res)
+  if (!programme) return
+
+  res.render('pages/your-health/book/choose-appointment', {
+    programme,
+    appointments: dummyAppointments
+  })
+})
+
+// Step 3: Confirm
+router.post('/pages/your-health/book/:programmeId/confirm', (req, res) => {
+  const programme = findProgramme(req, res)
+  if (!programme) return
+
+  res.render('pages/your-health/book/confirm', {
+    programme
+  })
+})
+
+// Step 4: Confirmed — update persona history so the programme moves to up-to-date
+router.post('/pages/your-health/book/:programmeId/confirmed', (req, res) => {
+  const programme = findProgramme(req, res)
+  if (!programme) return
+
+  const personaId = req.session.data['persona'] || personas[0].id
+  const persona = personas.find(p => p.id === personaId)
+  if (persona) {
+    if (!persona.history) persona.history = {}
+    // Parse the display date (e.g. "Monday 17 February 2026") to ISO
+    const bookDateStr = req.session.data['book-date'] || ''
+    const parsedDate = new Date(bookDateStr.replace(/^\w+\s/, ''))
+    const isoDate = !isNaN(parsedDate) ? parsedDate.toISOString().split('T')[0] : getToday().toISOString().split('T')[0]
+    const entry = { lastDate: isoDate }
+    if (programme.schedule.type === 'multi-dose' && programme.schedule.doses) {
+      entry.doses = programme.schedule.doses
+    }
+    persona.history[programme.id] = entry
+  }
+
+  res.render('pages/your-health/book/confirmed', {
+    programme
   })
 })
 

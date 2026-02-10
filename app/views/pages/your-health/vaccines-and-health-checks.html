@@ -8,7 +8,7 @@
 {% set pageHeading = "Vaccines and health checks" %}
 {% set pageDescription = "What you need to book, what's coming up, and what you've had" %}
 
-{% macro programmeCards(programmes, heading) %}
+{% macro programmeCards(programmes, heading, bookable) %}
   {% if programmes.length %}
     {% set cards = [] %}
     {% for prog in programmes %}
@@ -16,11 +16,16 @@
         <div class="nhsapp-card__below">
           <p class="nhsapp-card__description">{{ prog.description }}</p>
           {% if prog.statusText and prog.statusText !== prog.description %}
-            <p class="nhsapp-card__description">{{ prog.statusText }}</p>
+            <p class="nhsapp-card__description">{{ prog.statusText }}.</p>
           {% endif %}
         </div>
       {% endset %}
-      {% set cards = (cards.push({ title: prog.name, href: "#", descriptionHtml: cardHtml }), cards) %}
+      {% if bookable %}
+        {% set cardHref = "/pages/your-health/book/" + prog.id + "/find-location" %}
+      {% else %}
+        {% set cardHref = "#" %}
+      {% endif %}
+      {% set cards = (cards.push({ title: prog.name, href: cardHref, descriptionHtml: cardHtml }), cards) %}
     {% endfor %}
     {{ nhsappCardGroup({
       stacked: true,
@@ -41,8 +46,9 @@
         Look after your health by stopping illness or catching it early.
       </p>
 
-      {{ programmeCards(grouped.actionNeeded, "Book now") }}
+      {{ programmeCards(grouped.actionNeeded, "Book now", true) }}
       {{ programmeCards(grouped.inProgress, "In progress") }}
+      {{ programmeCards(grouped.booked, "Booked") }}
       {{ programmeCards(grouped.upcoming, "Coming up") }}
       {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
 

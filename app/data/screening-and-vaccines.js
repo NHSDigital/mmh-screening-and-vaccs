@@ -27,6 +27,7 @@ module.exports = [
     name: "Bowel cancer screening",
     type: "screening",
     description: "A home test kit to check for early signs of bowel cancer.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 50, max: 74 },
@@ -44,6 +45,7 @@ module.exports = [
     name: "Breast cancer screening",
     type: "screening",
     description: "A mammogram to check for early signs of breast cancer.",
+    settings: ["hospital", "clinic"],
 
     eligibility: {
       age: { min: 50, max: 71 },
@@ -61,6 +63,7 @@ module.exports = [
     name: "Cervical screening",
     type: "screening",
     description: "A test to check for changes in cells that could lead to cervical cancer.",
+    settings: ["gp-surgery", "clinic"],
 
     eligibility: {
       age: { min: 25, max: 64 },
@@ -78,6 +81,7 @@ module.exports = [
     name: "Lung cancer screening",
     type: "screening",
     description: "A low-dose CT scan to check for early signs of lung cancer.",
+    settings: ["hospital"],
 
     eligibility: {
       age: { min: 55, max: 74 },
@@ -103,6 +107,7 @@ module.exports = [
     name: "Diabetic eye screening",
     type: "screening",
     description: "A check for damage to the back of your eyes caused by diabetes.",
+    settings: ["hospital", "clinic"],
 
     eligibility: {
       age: { min: 12, max: null },
@@ -124,6 +129,7 @@ module.exports = [
     name: "Abdominal aortic aneurysm (AAA) screening",
     type: "screening",
     description: "A one-off ultrasound scan to check for a swelling in the main blood vessel in your tummy.",
+    settings: ["hospital"],
 
     eligibility: {
       age: { min: 65, max: 65 },
@@ -144,6 +150,7 @@ module.exports = [
     name: "6-in-1 vaccine",
     type: "vaccine",
     description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -162,6 +169,7 @@ module.exports = [
     name: "MenB vaccine",
     type: "vaccine",
     description: "Protects against meningococcal group B bacteria.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -180,6 +188,7 @@ module.exports = [
     name: "Rotavirus vaccine",
     type: "vaccine",
     description: "Protects against rotavirus infection, a common cause of diarrhoea and sickness.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 0, max: 0 },
@@ -198,6 +207,7 @@ module.exports = [
     name: "Pneumococcal (PCV) vaccine",
     type: "vaccine",
     description: "Protects against pneumococcal infections.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -216,6 +226,7 @@ module.exports = [
     name: "MMR vaccine",
     type: "vaccine",
     description: "Protects against measles, mumps and rubella.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 1, max: 5 },
@@ -234,6 +245,7 @@ module.exports = [
     name: "Pre-school booster (dTaP/IPV)",
     type: "vaccine",
     description: "A single dose to boost protection against diphtheria, tetanus, whooping cough and polio.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 3, max: 5 },
@@ -254,6 +266,7 @@ module.exports = [
     name: "Flu vaccine (children)",
     type: "vaccine",
     description: "A nasal spray given each autumn.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 2, max: 16 },
@@ -271,6 +284,7 @@ module.exports = [
     name: "HPV vaccine",
     type: "vaccine",
     description: "Protects against cancers caused by HPV. Usually given in Year 8.",
+    settings: ["gp-surgery", "clinic"],
 
     eligibility: {
       age: { min: 12, max: 25 },
@@ -287,6 +301,7 @@ module.exports = [
     name: "Teenage booster (Td/IPV)",
     type: "vaccine",
     description: "Boosts protection against tetanus, diphtheria and polio. Given in Year 9.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 14, max: 14 },
@@ -303,6 +318,7 @@ module.exports = [
     name: "MenACWY vaccine",
     type: "vaccine",
     description: "Protects against meningitis and septicaemia. Usually given in Year 9.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 14, max: 25 },
@@ -323,6 +339,7 @@ module.exports = [
     name: "Flu vaccine",
     type: "vaccine",
     description: "An annual vaccine, usually available from autumn.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 65, max: null },
@@ -348,6 +365,7 @@ module.exports = [
     name: "Pneumococcal vaccine (PPV23)",
     type: "vaccine",
     description: "A one-off vaccine to protect against pneumococcal infections.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 65, max: null },
@@ -372,6 +390,7 @@ module.exports = [
     name: "Shingles vaccine",
     type: "vaccine",
     description: "2 doses to protect against shingles, given 6 months apart.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 65, max: 80 },
@@ -398,6 +417,7 @@ module.exports = [
     name: "RSV vaccine",
     type: "vaccine",
     description: "A one-off vaccine to protect against respiratory syncytial virus.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 75, max: null },
@@ -414,6 +434,7 @@ module.exports = [
     name: "COVID-19 vaccine",
     type: "vaccine",
     description: "A seasonal vaccine, usually available from autumn.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 75, max: null },
@@ -443,6 +464,7 @@ module.exports = [
     name: "Flu vaccine (pregnancy)",
     type: "vaccine",
     description: "Recommended during pregnancy to protect you and your baby.",
+    settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
       age: { min: 16, max: 50 },
@@ -467,6 +489,7 @@ module.exports = [
     name: "Whooping cough vaccine (Tdap)",
     type: "vaccine",
     description: "Recommended from 16 weeks of pregnancy to protect your baby.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 16, max: 50 },
@@ -491,6 +514,7 @@ module.exports = [
     name: "RSV vaccine (pregnancy)",
     type: "vaccine",
     description: "Recommended from 28 weeks of pregnancy to protect your baby against RSV.",
+    settings: ["gp-surgery"],
 
     eligibility: {
       age: { min: 16, max: 50 },

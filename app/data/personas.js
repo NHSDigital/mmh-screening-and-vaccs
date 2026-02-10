@@ -2,6 +2,7 @@
 module.exports = [
   {
     // Margaret: demo persona showing as many states as possible
+    // History lastDate: past = done, future = booked appointment
     id: "Margaret",
     lastName: "Davies",
     dateOfBirth: "1960-03-15", // 65 years old
@@ -23,8 +24,10 @@ module.exports = [
       "bowel-cancer":            { lastDate: "2025-01-10" },
       "flu-vaccine":             { lastDate: "2024-10-05" },
 
+      // BOOKED — future date means appointment is booked
+      "breast-cancer":           { lastDate: "2026-03-10" },
+
       // DUE — interval has passed
-      "breast-cancer":           { lastDate: "2021-06-15" },
       "diabetic-eye-screening":  { lastDate: "2024-01-20" },
 
       // DUE — never had (no entry = never had)

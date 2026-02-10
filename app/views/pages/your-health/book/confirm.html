@@ -1,0 +1,70 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/book/" + programme.id + "/choose-appointment" %}
+
+{% set pageHeading = "Check your details before confirming" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+
+      {{ dynamicPageTitle({
+        title: pageHeading,
+        titleSecondary: true
+      })}}
+
+      <dl class="nhsuk-summary-list">
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            {{ programme.type | capitalize }}
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ programme.name }}
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Location
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ data['book-location'] }}
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Date
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ data['book-date'] }}
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Time
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            {{ data['book-time'] }}
+          </dd>
+        </div>
+
+      </dl>
+
+      <form id="form" method="post" action="/pages/your-health/book/{{ programme.id }}/confirmed" novalidate="novalidate">
+        {{ button({
+          text: "Confirm appointment",
+          classes: "nhsapp-button"
+        }) }}
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

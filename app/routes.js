@@ -42,7 +42,8 @@ router.get('/data-settings', (req, res) => {
 function getGroupedProgrammes (persona, today) {
   const userProgrammes = getProgrammesForPerson(persona, programmes, today)
   return {
-    actionNeeded:     userProgrammes.filter(p => p.displayStatus === 'action-needed'),
+    actionNeeded:     userProgrammes.filter(p => p.displayStatus === 'action-needed')
+                        .sort((a, b) => (b.overdueDays || 0) - (a.overdueDays || 0)),
     inProgress:       userProgrammes.filter(p => p.displayStatus === 'in-progress'),
     upcoming:         userProgrammes.filter(p => p.displayStatus === 'upcoming'),
     unknown: userProgrammes.filter(p => p.displayStatus === 'unknown'),

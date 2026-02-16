@@ -75,7 +75,8 @@ module.exports = [
 
     eligibility: {
       age: { min: 25, max: 64 },
-      sex: "female"
+      sex: "female",
+      excludeConditions: ["pregnant"]
     },
 
     schedule: {
@@ -95,6 +96,7 @@ module.exports = [
     eligibility: {
       age: { min: 25, max: 64 },
       sex: "female",
+      excludeConditions: ["pregnant"],
       requiresOptOut: "cervical-screening"
     },
 

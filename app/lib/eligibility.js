@@ -300,6 +300,13 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
     if (!checkSex(person, prog.eligibility)) continue
     if (!checkRequires(person, prog.eligibility, today)) continue
 
+    // Exclude if any exclude condition is confirmed true
+    if (prog.eligibility.excludeConditions) {
+      const personConditions = person.conditions || {}
+      const excluded = prog.eligibility.excludeConditions.some(cond => personConditions[cond] === true)
+      if (excluded) continue
+    }
+
     // Only show if the person has opted out of the specified programme
     if (prog.eligibility.requiresOptOut) {
       const optOutHistory = person.history && person.history[prog.eligibility.requiresOptOut]

@@ -16,9 +16,9 @@
         {{ programme.name }}
       </h1>
 
-      <p>If you opt out, you will no longer be invited for {{ programme.name | lower }}.</p>
+      {# <p>If you opt out, you will no longer be invited for {{ programme.name | lower }}.</p>
 
-      <p>You can opt back in at any time.</p>
+      <p>You can opt back in at any time.</p> #}
 
       <form method="post" action="/pages/your-health/programme/{{ programme.id }}/opt-out">
 
@@ -52,7 +52,7 @@
         }) }}
 
         {{ button({
-          text: "Opt out",
+          text: "Continue",
           classes: "nhsapp-button"
         }) }}
       </form>

@@ -1,0 +1,79 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = programme.name %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ programme.name }}
+      </h1>
+
+      {% if statusText %}
+        <p>{{ statusText }}</p>
+      {% endif %}
+
+      <p>{{ programme.description }}</p>
+
+      <h2 class="nhsuk-heading-m">About {{ programme.name | lower }}</h2>
+      <p>
+        Placeholder information about the {{ programme.name | lower }}.
+      </p>
+
+
+      {% if displayStatus === "unknown" %}
+
+        <a class="nhsuk-button nhsapp-button" href="/pages/your-health/eligibility/{{ programme.id }}/start">
+          Check if this is available to you
+        </a>
+
+      {% elif displayStatus === "action-needed" %}
+
+        <a class="nhsuk-button nhsapp-button" href="/pages/your-health/book/{{ programme.id }}/find-location">
+          Get started
+        </a>
+        <p>
+          <a href="/pages/your-health/programme/{{ programme.id }}/had-elsewhere" class="nhsuk-link nhsuk-link--no-visited-state">I have already had this</a>
+        </p>
+        <p>
+          <a href="/pages/your-health/programme/{{ programme.id }}/opt-out" class="nhsuk-link nhsuk-link--no-visited-state">I do not want this</a>
+        </p>
+
+      {% elif displayStatus === "overdue" %}
+
+        <p>Placeholder on missing a {{ programme.name | lower }}.</p>
+        <p><a href="#" class="nhsuk-link nhsuk-link--no-visited-state">Find out more about {{ programme.name | lower }}</a></p>
+
+        <p><a href="#" class="nhsuk-link nhsuk-link--no-visited-state">Arrange a {{ programme.name | lower }}</a></p>
+
+        <p><a href="/pages/your-health/programme/{{ programme.id }}/had-elsewhere" class="nhsuk-link nhsuk-link--no-visited-state">I have already had this</a></p>
+
+      {% elif displayStatus === "booked" %}
+
+        <a class="nhsuk-link--no-visited-state" href="/pages/your-health/book/{{ programme.id }}/find-location">
+          Change or cancel appointment
+        </a>
+
+      {% elif displayStatus === "opted-out" %}
+
+        <p>
+          <form method="post" action="/pages/your-health/programme/{{ programme.id }}/opt-back-in">
+            <button type="submit" class="nhsuk-link--no-visited-state" style="background:none;border:none;padding:0;color:#005eb8;text-decoration:underline;cursor:pointer;font-size:inherit;font-family:inherit;">
+              Opt back in
+            </button>
+          </form>
+        </p>
+
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

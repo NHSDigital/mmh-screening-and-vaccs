@@ -1,0 +1,132 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/home-p9" %}
+
+{% set pageHeadingHtml %}
+  Vaccines and {{ "health checks" | nbsp }}
+{% endset %}
+{% set pageDescription = "What you need to book, what's coming up, and what you've had" %}
+
+{% macro programmeCards(programmes, heading) %}
+  {% if programmes.length %}
+    {% set cards = [] %}
+    {% for prog in programmes %}
+      {% set cardHtml %}
+        <div class="nhsapp-card__below">
+          <p class="nhsapp-card__description">{{ prog.description }}</p>
+          {% if prog.statusText and prog.statusText !== prog.description %}
+            <p class="nhsapp-card__description">{{ prog.statusText }}</p>
+          {% endif %}
+        </div>
+      {% endset %}
+      {% set cardHref = "/pages/your-health/programme/" + prog.id %}
+      {% set cards = (cards.push({ title: prog.name, href: cardHref, descriptionHtml: cardHtml }), cards) %}
+    {% endfor %}
+    {{ nhsappCardGroup({
+      stacked: true,
+      heading: heading,
+      cards: cards
+    }) }}
+  {% endif %}
+{% endmacro %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      {% if activeProxy %}
+        <span class="nhsuk-caption-xl">{{ activeProxy.id }} {{ activeProxy.lastName }}</span>
+      {% endif %}
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeadingHtml | safe }}
+      </h1>
+      {% if activeProxy %}
+        <p>
+          Vaccines and health checks for {{ activeProxy.id }}, based on their age and health record.
+        </p>
+      {% else %}
+        <p>
+          Look after your health by stopping illness or catching it early.
+        </p>
+      {% endif %}
+
+      {# Proxy switching #}
+
+      {% if proxies.length %}
+        {% if activeProxy %}
+          {# Viewing a proxy — show link back to self #}
+          {% if proxies.length === 1 %}
+            <p>
+              <a href="/pages/your-health/vaccines-and-health-checks">See vaccines and health checks for {{ persona.id }} {{ persona.lastName }} (you)</a>
+            </p>
+          {% else %}
+            <p>See vaccines and health checks for:</p>
+            <ul class="nhsuk-list nhsuk-list--bullet">
+              <li>
+                <a href="/pages/your-health/vaccines-and-health-checks">{{ persona.id }} {{ persona.lastName }} (you)</a>
+              </li>
+              {% for proxy in proxies %}
+                {% if proxy.id !== activeProxy.id %}
+                  <li>
+                    <a href="/pages/your-health/vaccines-and-health-checks?proxy={{ proxy.id }}">{{ proxy.id }} {{ proxy.lastName }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% else %}
+          {# Viewing own data — show to proxies #}
+          {% if proxies.length === 1 %}
+            <p>
+              <a href="/pages/your-health/vaccines-and-health-checks?proxy={{ proxies[0].id }}">See vaccines and health checks for {{ proxies[0].id }} {{ proxies[0].lastName }}</a>
+            </p>
+          {% else %}
+            <p>See vaccines and health checks for:</p>
+            <ul class="nhsuk-list nhsuk-list--bullet">
+              {% for proxy in proxies %}
+                <li>
+                  <a href="/pages/your-health/vaccines-and-health-checks?proxy={{ proxy.id }}">{{ proxy.id }} {{ proxy.lastName }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {{ programmeCards(grouped.booked, "Appointments") }}
+      {{ programmeCards(grouped.actionNeeded, "Due now") }}
+      {{ programmeCards(grouped.overdue, "Overdue") }}
+      {% if activeProxy %}
+        {{ programmeCards(grouped.unknown, "Check if these are available to " + activeProxy.id) }}
+      {% else %}
+        {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
+      {% endif %}
+      {{ programmeCards(grouped.upcoming, "Available in the future") }}
+
+
+      {# Other pages #}
+
+      <ul class="nhsuk-list nhsuk-u-margin-top-6">
+        {% if grouped.optedOut.length %}
+          <li>
+            {% if activeProxy %}
+              <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things {{ activeProxy.id }} has opted out of ({{ grouped.optedOut.length }})</a>
+            {% else %}
+              <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things you’ve opted out of ({{ grouped.optedOut.length }})</a>
+            {% endif %}
+          </li>
+        {% endif %}
+        {% if grouped.upToDate.length %}
+          <li>
+            <a href="/pages/your-health/vaccines-and-health-checks-history">Up to date ({{ grouped.upToDate.length }})</a>
+          </li>
+        {% endif %}
+      </ul>
+
+    </div>
+  </div>
+
+{% endblock %}

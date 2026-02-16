@@ -1,0 +1,31 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/eligibility/" + programme.id + "/question/" + lastQuestionIndex %}
+
+{% set pageHeading = programme.name %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ programme.name }}
+      </h1>
+
+      <p>Based on your answers, this is available to you.</p>
+
+      <form method="post" action="/pages/your-health/eligibility/{{ programme.id }}/result">
+        {{ button({
+          text: "Book now",
+          classes: "nhsapp-button"
+        }) }}
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

@@ -26,6 +26,7 @@ dotenv.config({
 const config = require('./app/config')
 const locals = require('./app/locals')
 const routes = require('./app/routes')
+const personas = require('./app/data/personas')
 const exampleTemplatesRoutes = require('./lib/example_templates_routes')
 const authentication = require('./lib/middleware/authentication')
 const automaticRouting = require('./lib/middleware/auto-routing')
@@ -233,12 +234,29 @@ app.use('/prototype-admin', prototypeAdminRoutes)
 // Clear all data in session if you open /examples/passing-data/clear-data
 app.post('/clear-data', (req, res) => {
   req.session.data = {};
+
+  // Reset persona data
+  const personasPath = require.resolve('./app/data/personas')
+  delete require.cache[personasPath]
+  const fresh = require(personasPath)
+  personas.length = 0
+  for (const p of JSON.parse(JSON.stringify(fresh))) personas.push(p)
+  require.cache[personasPath].exports = personas
+
   res.render('clear-data-success');
 });
 
 // Clear all data in session if you log out on /pages/account-and-settings-p9.html
 app.post('/pages/logged-out', (req, res) => {
   req.session.data = {};
+
+  const personasPath = require.resolve('./app/data/personas')
+  delete require.cache[personasPath]
+  const fresh = require(personasPath)
+  personas.length = 0
+  for (const p of JSON.parse(JSON.stringify(fresh))) personas.push(p)
+  require.cache[personasPath].exports = personas
+
   res.render('pages/logged-out');
 });
 

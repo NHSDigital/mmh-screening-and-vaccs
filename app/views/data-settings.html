@@ -25,7 +25,136 @@
 
       <hr>
 
-      <form method="post" action="/pages/" novalidate="novalidate">
+      <form method="post" action="/frame" novalidate="novalidate">
+
+        {% set personaItems = [] %}
+        {% for p in personas %}
+          {% set label %}{{ p.id }} {{ p.lastName }}, {{ p.age }}, {{ p.sex }}{% endset %}
+          {% if p.proxies | length %}
+            {% set proxyWord = "proxy" if p.proxies | length == 1 else "proxies" %}
+            {% set label = label + " (" + p.proxies | length + " " + proxyWord + ")" %}
+          {% endif %}
+
+          {% set hintHtml %}
+            <details class="nhsuk-details nhsuk-u-margin-top-2 nhsuk-u-margin-bottom-0">
+              <summary class="nhsuk-details__summary">
+                <span class="nhsuk-details__summary-text">View profile</span>
+              </summary>
+              <div class="nhsuk-details__text">
+
+                <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2">Profile</h3>
+                <dl class="nhsuk-summary-list nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+                  <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">Date of birth</dt>
+                    <dd class="nhsuk-summary-list__value">{{ p.dateOfBirth }} (age {{ p.age }})</dd>
+                  </div>
+                  <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">Sex</dt>
+                    <dd class="nhsuk-summary-list__value">{{ p.sex | capitalize }}</dd>
+                  </div>
+                  {% if p.nominatedGpSurgery %}
+                    {% set gpLocation = null %}
+                    {% for location in locations %}
+                      {% if location.id === p.nominatedGpSurgery %}
+                        {% set gpLocation = location %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="nhsuk-summary-list__row">
+                      <dt class="nhsuk-summary-list__key">GP surgery</dt>
+                      <dd class="nhsuk-summary-list__value">{{ gpLocation.name if gpLocation else p.nominatedGpSurgery }}</dd>
+                    </div>
+                  {% endif %}
+                  {% if p.nominatedPharmacy %}
+                    {% set pharmacyLocation = null %}
+                    {% for location in locations %}
+                      {% if location.id === p.nominatedPharmacy %}
+                        {% set pharmacyLocation = location %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="nhsuk-summary-list__row">
+                      <dt class="nhsuk-summary-list__key">Pharmacy</dt>
+                      <dd class="nhsuk-summary-list__value">{{ pharmacyLocation.name if pharmacyLocation else p.nominatedPharmacy }}</dd>
+                    </div>
+                  {% endif %}
+                </dl>
+
+                {% if p.conditions %}
+                  <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2">Conditions</h3>
+                  <dl class="nhsuk-summary-list nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+                    {% for key, value in p.conditions %}
+                      <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">{{ key }}</dt>
+                        <dd class="nhsuk-summary-list__value">
+                          {% if value === true %}Yes
+                          {% elif value === false %}No
+                          {% else %}Unknown
+                          {% endif %}
+                        </dd>
+                      </div>
+                    {% endfor %}
+                  </dl>
+                {% endif %}
+
+                {% if p.history %}
+                  <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2">History</h3>
+                  <dl class="nhsuk-summary-list nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+                    {% for key, value in p.history %}
+                      <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">{{ key }}</dt>
+                        <dd class="nhsuk-summary-list__value">
+                          {% if value.optedOut %}Opted out
+                          {% elif value.lastDate %}{{ value.lastDate }}
+                          {% endif %}
+                        </dd>
+                      </div>
+                    {% endfor %}
+                  </dl>
+                {% endif %}
+
+                {% if p.proxies | length %}
+                  {% for proxy in p.proxies %}
+                    <h3 class="nhsuk-heading-xs nhsuk-u-margin-bottom-2">Proxy: {{ proxy.id }} {{ proxy.lastName }} (age {{ proxy.age }}, {{ proxy.sex }})</h3>
+                    {% if proxy.history %}
+                      <dl class="nhsuk-summary-list nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+                        {% for key, value in proxy.history %}
+                          <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">{{ key }}</dt>
+                            <dd class="nhsuk-summary-list__value">{{ value.lastDate }}</dd>
+                          </div>
+                        {% endfor %}
+                      </dl>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+              </div>
+            </details>
+          {% endset %}
+
+          {% set personaItems = (personaItems.push({
+            "value": p.id,
+            "text": label,
+            "checked": checked("persona", p.id),
+            "hint": {
+              "html": hintHtml
+            }
+          }), personaItems) %}
+        {% endfor %}
+
+        {{ radios({
+          "idPrefix": "persona",
+          "name": "persona",
+          "fieldset": {
+            "legend": {
+              "text": "Persona",
+              "classes": "nhsuk-fieldset__legend--m"
+            }
+          },
+          "hint": {
+            "text": "Changes which screening and vaccinations are shown"
+          },
+          "items": personaItems
+        }) }}
 
         {{ radios({
           "idPrefix": "web",
@@ -221,40 +350,6 @@
               checked: checked("messageSendingError", "false")
             }
           ]
-        }) }}
-
-        <hr>
-
-        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-3">User account</h2>
-
-        {{ input({
-          "label": {
-          "text": "First name"
-          },
-          "id": "userFirstName",
-          "name": "userFirstName",
-          "classes": "",
-          "value": data['userFirstName']
-        }) }}
-
-        {{ input({
-          "label": {
-          "text": "Last name"
-          },
-          "id": "userLastName",
-          "name": "userLastName",
-          "classes": "",
-          "value": data['userLastName']
-        }) }}
-
-        {{ input({
-          "label": {
-          "text": "NHS number"
-          },
-          "id": "nhsNumber",
-          "name": "nhsNumber",
-          "classes": "nhsuk-input--width-10",
-          "value": data['nhsNumber']
         }) }}
 
         <hr>

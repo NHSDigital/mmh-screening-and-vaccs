@@ -1,0 +1,33 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/programme/" + programme.id %}
+
+{% set pageHeading = programme.name %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ programme.name }}
+      </h1>
+
+      <p>If you opt out, you will no longer be invited for {{ programme.name | lower }}.</p>
+
+      <p>You can opt back in at any time.</p>
+
+      <form method="post" action="/pages/your-health/programme/{{ programme.id }}/opt-out">
+        {{ button({
+          text: "Opt out",
+          classes: "nhsapp-button"
+        }) }}
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

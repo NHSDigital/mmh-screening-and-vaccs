@@ -1,0 +1,38 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Missed vaccines and health checks" %}
+{% set pageDescription = "Things you were eligible for but did not have in time" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading }}
+      </h1>
+      <p>
+        These are vaccines and health checks that were available to you but are no longer being offered. Speak to your GP if you have any concerns.
+      </p>
+
+      {% if missed.length %}
+        {% set cards = [] %}
+        {% for prog in missed %}
+          {% set cards = (cards.push({ title: prog.name, href: "#", description: prog.statusText }), cards) %}
+        {% endfor %}
+        {{ nhsappCardGroup({
+          stacked: true,
+          cards: cards
+        }) }}
+      {% else %}
+        <p>You have no missed vaccines or health checks.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

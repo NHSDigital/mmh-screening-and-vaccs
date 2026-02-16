@@ -1,0 +1,61 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/programme/" + programme.id %}
+
+{% set pageHeading = programme.name %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <form method="post" action="/pages/your-health/programme/{{ programme.id }}/had-elsewhere">
+
+        {{ radios({
+          idPrefix: "had-elsewhere",
+          name: "had-elsewhere",
+          fieldset: {
+            legend: {
+              text: "Where did you have " + (programme.name | lower) + "?",
+              classes: "nhsuk-fieldset__legend--xl",
+              isPageHeading: true
+            }
+          },
+          items: [
+            {
+              value: "nhs",
+              text: "With the NHS",
+              checked: checked("had-elsewhere", "nhs")
+            },
+            {
+              value: "privately",
+              text: "Privately – in the UK",
+              checked: checked("had-elsewhere", "privately")
+            },
+            {
+              value: "abroad",
+              text: "In another country",
+              checked: checked("had-elsewhere", "abroad")
+            },
+            {
+              value: "not-sure",
+              text: "Not sure",
+              checked: checked("had-elsewhere", "not-sure")
+            }
+          ]
+        }) }}
+
+        {{ button({
+          text: "Continue",
+          classes: "nhsapp-button"
+        }) }}
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

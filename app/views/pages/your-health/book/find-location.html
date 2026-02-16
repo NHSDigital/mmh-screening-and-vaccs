@@ -1,0 +1,168 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Find a location" %}
+
+{# Work out which setting types are available for this programme #}
+{% set hasGpSurgery = false %}
+{% set hasPharmacy = false %}
+{% set hasHospital = false %}
+{% set hasClinic = false %}
+{% for location in locations %}
+  {% if location.type === "gp-surgery" %}{% set hasGpSurgery = true %}{% endif %}
+  {% if location.type === "pharmacy" %}{% set hasPharmacy = true %}{% endif %}
+  {% if location.type === "hospital" %}{% set hasHospital = true %}{% endif %}
+  {% if location.type === "clinic" %}{% set hasClinic = true %}{% endif %}
+{% endfor %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">Choose where to get a {{ programme.name | lower }}</h1>
+
+      {# ---- Pharmacy: nominated or list ---- #}
+      {% if hasPharmacy %}
+
+        {% if nominatedPharmacy %}
+
+          <p>You can get this at your pharmacy.</p>
+          <ul class="nhsapp-cards nhsapp-cards--stacked">
+            <li class="nhsapp-card">
+              <form id="locationForm-{{ nominatedPharmacy.id }}" method="post" action="/pages/your-health/book/{{ programme.id }}/walk-in">
+                <input type="hidden" name="book-location" value="{{ nominatedPharmacy.name }}">
+                <input type="hidden" name="book-location-id" value="{{ nominatedPharmacy.id }}">
+                <div class="nhsapp-card__container">
+                  <div class="nhsapp-card__content">
+                    <a href="javascript:{}" onclick="document.getElementById('locationForm-{{ nominatedPharmacy.id }}').submit();" class="nhsapp-card__link nhsuk-link--no-visited-state">
+                      {{ nominatedPharmacy.name }}
+                    </a>
+                    <p class="nhsapp-card__description">{{ nominatedPharmacy.address }}</p>
+                    <p class="nhsapp-card__description nhsuk-u-secondary-text-color">{{ nominatedPharmacy.distance }}</p>
+                  </div>
+                  {{ nhsappIcon('chevronRight') }}
+                </div>
+              </form>
+            </li>
+          </ul>
+          <p><a href="#" class="nhsuk-link">Find another pharmacy</a></p>
+
+        {% else %}
+
+          <h2 class="nhsuk-heading-m">Find a pharmacy near you</h2>
+          <ul class="nhsapp-cards nhsapp-cards--stacked">
+            {% for location in locations %}
+              {% if location.type === "pharmacy" %}
+                <li class="nhsapp-card">
+                  <form id="locationForm-{{ location.id }}" method="post" action="/pages/your-health/book/{{ programme.id }}/walk-in">
+                    <input type="hidden" name="book-location" value="{{ location.name }}">
+                    <input type="hidden" name="book-location-id" value="{{ location.id }}">
+                    <div class="nhsapp-card__container">
+                      <div class="nhsapp-card__content">
+                        <a href="javascript:{}" onclick="document.getElementById('locationForm-{{ location.id }}').submit();" class="nhsapp-card__link nhsuk-link--no-visited-state">
+                          {{ location.name }}
+                        </a>
+                        <p class="nhsapp-card__description">{{ location.address }}</p>
+                        <p class="nhsapp-card__description nhsuk-u-secondary-text-color">{{ location.distance }}</p>
+                      </div>
+                      {{ nhsappIcon('chevronRight') }}
+                    </div>
+                  </form>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+        {% endif %}
+
+      {% endif %}
+
+      {# ---- GP surgery: show nominated only ---- #}
+      {% if hasGpSurgery and nominatedGpSurgery %}
+
+        <p>You can {% if hasPharmacy %}also {% endif %}get this at your GP surgery.</p>
+        <ul class="nhsapp-cards nhsapp-cards--stacked">
+          <li class="nhsapp-card">
+            <form id="locationForm-{{ nominatedGpSurgery.id }}" method="post" action="/pages/your-health/book/{{ programme.id }}/choose-appointment">
+              <input type="hidden" name="book-location" value="{{ nominatedGpSurgery.name }}">
+              <div class="nhsapp-card__container">
+                <div class="nhsapp-card__content">
+                  <a href="javascript:{}" onclick="document.getElementById('locationForm-{{ nominatedGpSurgery.id }}').submit();" class="nhsapp-card__link nhsuk-link--no-visited-state">
+                    {{ nominatedGpSurgery.name }}
+                  </a>
+                  <p class="nhsapp-card__description">{{ nominatedGpSurgery.address }}</p>
+                  <p class="nhsapp-card__description nhsuk-u-secondary-text-color">{{ nominatedGpSurgery.distance }}</p>
+                </div>
+                {{ nhsappIcon('chevronRight') }}
+              </div>
+            </form>
+          </li>
+        </ul>
+
+      {% endif %}
+
+      {# ---- Hospital ---- #}
+      {% if hasHospital %}
+
+        <h2 class="nhsuk-heading-m">Book at a hospital</h2>
+        <ul class="nhsapp-cards nhsapp-cards--stacked">
+          {% for location in locations %}
+            {% if location.type === "hospital" %}
+              <li class="nhsapp-card">
+                <form id="locationForm-{{ location.id }}" method="post" action="/pages/your-health/book/{{ programme.id }}/choose-appointment">
+                  <input type="hidden" name="book-location" value="{{ location.name }}">
+                  <div class="nhsapp-card__container">
+                    <div class="nhsapp-card__content">
+                      <a href="javascript:{}" onclick="document.getElementById('locationForm-{{ location.id }}').submit();" class="nhsapp-card__link nhsuk-link--no-visited-state">
+                        {{ location.name }}
+                      </a>
+                      <p class="nhsapp-card__description">{{ location.address }}</p>
+                      <p class="nhsapp-card__description nhsuk-u-secondary-text-color">{{ location.distance }}</p>
+                    </div>
+                    {{ nhsappIcon('chevronRight') }}
+                  </div>
+                </form>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+      {% endif %}
+
+      {# ---- Clinic ---- #}
+      {% if hasClinic %}
+
+        <h2 class="nhsuk-heading-m">Book at a clinic</h2>
+        <ul class="nhsapp-cards nhsapp-cards--stacked">
+          {% for location in locations %}
+            {% if location.type === "clinic" %}
+              <li class="nhsapp-card">
+                <form id="locationForm-{{ location.id }}" method="post" action="/pages/your-health/book/{{ programme.id }}/choose-appointment">
+                  <input type="hidden" name="book-location" value="{{ location.name }}">
+                  <div class="nhsapp-card__container">
+                    <div class="nhsapp-card__content">
+                      <a href="javascript:{}" onclick="document.getElementById('locationForm-{{ location.id }}').submit();" class="nhsapp-card__link nhsuk-link--no-visited-state">
+                        {{ location.name }}
+                      </a>
+                      <p class="nhsapp-card__description">{{ location.address }}</p>
+                      <p class="nhsapp-card__description nhsuk-u-secondary-text-color">{{ location.distance }}</p>
+                    </div>
+                    {{ nhsappIcon('chevronRight') }}
+                  </div>
+                </form>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

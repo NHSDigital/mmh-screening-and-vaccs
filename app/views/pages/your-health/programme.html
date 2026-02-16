@@ -55,6 +55,10 @@
 
         <p><a href="/pages/your-health/programme/{{ programme.id }}/had-elsewhere" class="nhsuk-link nhsuk-link--no-visited-state">I have already had this</a></p>
 
+       <p>
+          <a href="/pages/your-health/programme/{{ programme.id }}/opt-out" class="nhsuk-link nhsuk-link--no-visited-state">I do not want this</a>
+        </p>
+
       {% elif displayStatus === "booked" %}
 
         <a class="nhsuk-link--no-visited-state" href="/pages/your-health/book/{{ programme.id }}/find-location">

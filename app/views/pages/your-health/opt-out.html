@@ -21,6 +21,36 @@
       <p>You can opt back in at any time.</p>
 
       <form method="post" action="/pages/your-health/programme/{{ programme.id }}/opt-out">
+
+        {{ radios({
+          "idPrefix": "opt-out-reason",
+          "name": "opt-out-reason",
+          "fieldset": {
+            "legend": {
+              "text": "Why do you not want this?",
+              "classes": "nhsuk-fieldset__legend--m"
+            }
+          },
+          "items": [
+            {
+              "value": "do-not-need",
+              "text": "I do not think I need it"
+            },
+            {
+              "value": "worried",
+              "text": "I am worried about having it"
+            },
+            {
+              "value": "practical-reasons",
+              "text": "Practical reasons, such as time or travel"
+            },
+            {
+              "value": "prefer-not-to-say",
+              "text": "I prefer not to say"
+            }
+          ]
+        }) }}
+
         {{ button({
           text: "Opt out",
           classes: "nhsapp-button"

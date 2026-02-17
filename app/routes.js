@@ -284,7 +284,8 @@ router.get('/pages/your-health/programme/:programmeId', (req, res) => {
   res.render('pages/your-health/programme', {
     programme,
     displayStatus: userProg ? userProg.displayStatus : 'unknown',
-    statusText: userProg ? userProg.statusText : null
+    statusText: userProg ? userProg.statusText : null,
+    eligibilityReasons: userProg ? userProg.eligibilityReasons : []
   })
 })
 

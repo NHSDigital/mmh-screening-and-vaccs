@@ -20,6 +20,9 @@
           {% if prog.statusText and prog.statusText !== prog.description %}
             <p class="nhsapp-card__description">{{ prog.statusText }}</p>
           {% endif %}
+          {% if prog.eligibilityReasons.length %}
+            <p class="nhsapp-card__description">Available because {{ prog.eligibilityReasons | join(' and ') }}.</p>
+          {% endif %}
         </div>
       {% endset %}
       {% set cardHref = "/pages/your-health/programme/" + prog.id %}

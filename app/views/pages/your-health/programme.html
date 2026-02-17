@@ -22,6 +22,10 @@
 
       <p>{{ programme.description }}</p>
 
+      {% if eligibilityReasons.length %}
+        <p>Offered to you because {{ eligibilityReasons | join(' and ') }}.</p>
+      {% endif %}
+
       <h2 class="nhsuk-heading-m">About {{ programme.name | lower }}</h2>
       <p>
         Placeholder information about the {{ programme.name | lower }}.

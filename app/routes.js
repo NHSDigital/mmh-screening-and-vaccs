@@ -684,38 +684,8 @@ const conditionLabelsForPersona = {
   careHomeResident: 'Care home resident'
 }
 
-// Conditions stored as checkboxes (true/false)
-const checkboxConditionKeys = ['diabetes', 'clinicalRiskGroup', 'immunosuppressed']
-
-// Conditions stored as radios (yes/no/unknown → true/false/undefined)
-const radioConditionKeys = ['smoker', 'exSmoker', 'carer', 'careHomeResident', 'pregnant']
-
 // All condition keys
-const allConditionKeys = [...checkboxConditionKeys, ...radioConditionKeys]
-
-/**
- * Read conditions from session data.
- * Checkboxes: checked = true, unchecked = false
- * Radios: "yes" = true, "no" = false, "unknown" or missing = undefined
- */
-function getConditionsFromData (data) {
-  const selectedConditions = data['create-persona-conditions'] || []
-  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : (selectedConditions ? [selectedConditions] : [])
-  const conditions = {}
-
-  for (const key of checkboxConditionKeys) {
-    conditions[key] = conditionsArray.includes(key)
-  }
-
-  for (const key of radioConditionKeys) {
-    const value = data['create-persona-condition-' + key]
-    if (value === 'yes') conditions[key] = true
-    else if (value === 'no') conditions[key] = false
-    else conditions[key] = undefined
-  }
-
-  return conditions
-}
+const allConditionKeys = ['diabetes', 'smoker', 'exSmoker', 'pregnant', 'clinicalRiskGroup', 'carer', 'immunosuppressed', 'careHomeResident']
 
 /**
  * Build a temporary persona from session data for eligibility checks.
@@ -727,12 +697,18 @@ function buildTempPersona (data) {
   const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   const sex = data['create-persona-sex'] || 'female'
 
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditions = {}
+  for (const key of allConditionKeys) {
+    conditions[key] = Array.isArray(selectedConditions) ? selectedConditions.includes(key) : selectedConditions === key
+  }
+
   return {
-    id: data['create-persona-first-name'] || 'Smithy',
-    lastName: data['create-persona-last-name'] || 'McSmithface',
+    id: data['create-persona-first-name'] || 'Custom',
+    lastName: data['create-persona-last-name'] || 'Persona',
     dateOfBirth: dob,
     sex,
-    conditions: getConditionsFromData(data),
+    conditions,
     history: {}
   }
 }
@@ -909,15 +885,11 @@ router.get('/pages/create-persona/check-answers', (req, res) => {
   const sex = data['create-persona-sex'] || 'female'
 
   // Conditions summary
-  const conditions = getConditionsFromData(data)
-  const conditionLines = []
-  for (const key of allConditionKeys) {
-    const label = conditionLabelsForPersona[key] || key
-    if (conditions[key] === true) conditionLines.push(label + ': Yes')
-    else if (conditions[key] === false) conditionLines.push(label + ': No')
-    else conditionLines.push(label + ': Unknown')
-  }
-  const conditionsHtml = conditionLines.join('<br>')
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
+  const conditionsHtml = conditionsArray.length
+    ? conditionsArray.map(c => conditionLabelsForPersona[c] || c).join('<br>')
+    : 'None'
 
   // Vaccine history summary
   const selectedVaccines = data['create-persona-vaccines'] || []
@@ -963,8 +935,13 @@ router.post('/pages/create-persona/check-answers', (req, res) => {
   let sex = data['create-persona-sex']
   if (!sex) sex = Math.random() < 0.5 ? 'male' : 'female'
 
-  // Conditions from checkboxes and radios
-  const conditions = getConditionsFromData(data)
+  // Conditions: checked items are true, unchecked are false
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
+  const conditions = {}
+  for (const key of allConditionKeys) {
+    conditions[key] = conditionsArray.includes(key)
+  }
 
   // History: generate dates for checked programmes
   const history = {}

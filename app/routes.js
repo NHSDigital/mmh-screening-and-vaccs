@@ -646,4 +646,331 @@ router.post('/pages/your-health/book/:programmeId/confirmed', (req, res) => {
   })
 })
 
+// -------------------------------------------------------
+// Create persona flow
+// -------------------------------------------------------
+
+// Condition labels for display on check-answers page
+const conditionLabelsForPersona = {
+  diabetes: 'Diabetes',
+  smoker: 'Current smoker',
+  exSmoker: 'Ex-smoker',
+  pregnant: 'Pregnant',
+  clinicalRiskGroup: 'Long-term health condition',
+  carer: 'Unpaid carer',
+  immunosuppressed: 'Weakened immune system',
+  careHomeResident: 'Care home resident'
+}
+
+// All condition keys
+const allConditionKeys = ['diabetes', 'smoker', 'exSmoker', 'pregnant', 'clinicalRiskGroup', 'carer', 'immunosuppressed', 'careHomeResident']
+
+/**
+ * Build a temporary persona from session data for eligibility checks.
+ */
+function buildTempPersona (data) {
+  const day = data['create-persona-dob-day'] || '1'
+  const month = data['create-persona-dob-month'] || '1'
+  const year = data['create-persona-dob-year'] || '1970'
+  const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  const sex = data['create-persona-sex'] || 'female'
+
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditions = {}
+  for (const key of allConditionKeys) {
+    conditions[key] = Array.isArray(selectedConditions) ? selectedConditions.includes(key) : selectedConditions === key
+  }
+
+  return {
+    id: data['create-persona-first-name'] || 'Smithy',
+    lastName: data['create-persona-last-name'] || 'McSmithface',
+    dateOfBirth: dob,
+    sex,
+    conditions,
+    history: {}
+  }
+}
+
+/**
+ * Get programmes a persona could have had (for history selection).
+ * Returns first-dose-only programmes matching age, sex and conditions.
+ */
+function getCouldHaveHadProgrammes (tempPersona, type) {
+  const today = getToday()
+  const age = calculateAge(tempPersona.dateOfBirth, today)
+
+  return programmes.filter(prog => {
+    // Filter by type
+    if (prog.type !== type) return false
+
+    // Skip later doses in multi-dose chains — only show first dose
+    if (prog.eligibility.requires && prog.eligibility.requires.length) return false
+
+    // Skip programmes requiring opt-out of another
+    if (prog.eligibility.requiresOptOut) return false
+
+    // Sex must match
+    if (!checkSex(tempPersona, prog.eligibility)) return false
+
+    // Person must be old enough (current age >= min age)
+    if (age < prog.eligibility.age.min) return false
+
+    // For condition-required programmes, check conditions
+    if (prog.eligibility.conditions) {
+      const { mode, required } = prog.eligibility.conditions
+      const personConditions = tempPersona.conditions || {}
+
+      if (mode === 'and') {
+        // All required conditions must be true
+        const allMet = required.every(c => personConditions[c] === true)
+        if (!allMet) return false
+      }
+      // For 'or' mode: age qualifies OR at least one condition — age already qualifies if we passed min check
+    }
+
+    // Skip pregnancy vaccines if not pregnant
+    if (prog.eligibility.conditions && prog.eligibility.conditions.mode === 'and' &&
+        prog.eligibility.conditions.required.includes('pregnant') &&
+        !tempPersona.conditions.pregnant) {
+      return false
+    }
+
+    return true
+  })
+}
+
+/**
+ * Generate a sensible history date for a programme the persona has had.
+ */
+function generateHistoryDate (prog, tempPersona) {
+  const today = getToday()
+  const dob = new Date(tempPersona.dateOfBirth)
+  const age = calculateAge(tempPersona.dateOfBirth, today)
+
+  if (prog.seasonalWindow) {
+    // Seasonal: last October 1st
+    const year = today.getMonth() >= 9 ? today.getFullYear() : today.getFullYear() - 1
+    return `${year}-10-01`
+  }
+
+  if (prog.schedule.type === 'recurring' && prog.schedule.intervalYears) {
+    // Recurring: halfway through the interval (shows as upcoming, not overdue)
+    const halfInterval = Math.floor(prog.schedule.intervalYears * 365 / 2)
+    const date = new Date(today)
+    date.setDate(date.getDate() - halfInterval)
+    return date.toISOString().split('T')[0]
+  }
+
+  // One-off: 3 months after becoming eligible
+  const eligibleDate = new Date(dob)
+  eligibleDate.setFullYear(eligibleDate.getFullYear() + prog.eligibility.age.min)
+  eligibleDate.setMonth(eligibleDate.getMonth() + 3)
+  // Don't use a future date
+  if (eligibleDate > today) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - 30)
+    return date.toISOString().split('T')[0]
+  }
+  return eligibleDate.toISOString().split('T')[0]
+}
+
+/**
+ * Find all doses in a multi-dose chain starting from a first dose.
+ */
+function getMultiDoseChain (firstDoseId) {
+  const chain = [firstDoseId]
+  let currentId = firstDoseId
+  // Find programmes that require currentId
+  while (true) {
+    const nextDose = programmes.find(p =>
+      p.eligibility.requires && p.eligibility.requires.includes(currentId)
+    )
+    if (!nextDose) break
+    chain.push(nextDose.id)
+    currentId = nextDose.id
+  }
+  return chain
+}
+
+// Page 1: Name
+router.get('/pages/create-persona/name', (req, res) => {
+  res.render('pages/create-persona/name')
+})
+
+router.post('/pages/create-persona/name', (req, res) => {
+  res.redirect('/pages/create-persona/date-of-birth')
+})
+
+// Page 2: Date of birth
+router.get('/pages/create-persona/date-of-birth', (req, res) => {
+  res.render('pages/create-persona/date-of-birth')
+})
+
+router.post('/pages/create-persona/date-of-birth', (req, res) => {
+  res.redirect('/pages/create-persona/sex')
+})
+
+// Page 3: Sex
+router.get('/pages/create-persona/sex', (req, res) => {
+  res.render('pages/create-persona/sex')
+})
+
+router.post('/pages/create-persona/sex', (req, res) => {
+  res.redirect('/pages/create-persona/conditions')
+})
+
+// Page 4: Conditions
+router.get('/pages/create-persona/conditions', (req, res) => {
+  const sex = req.session.data['create-persona-sex'] || 'female'
+  res.render('pages/create-persona/conditions', { sex })
+})
+
+router.post('/pages/create-persona/conditions', (req, res) => {
+  res.redirect('/pages/create-persona/vaccine-history')
+})
+
+// Page 5: Vaccine history
+router.get('/pages/create-persona/vaccine-history', (req, res) => {
+  const tempPersona = buildTempPersona(req.session.data)
+  const vaccines = getCouldHaveHadProgrammes(tempPersona, 'vaccine')
+  res.render('pages/create-persona/vaccine-history', { vaccines })
+})
+
+router.post('/pages/create-persona/vaccine-history', (req, res) => {
+  res.redirect('/pages/create-persona/screening-history')
+})
+
+// Page 6: Screening history
+router.get('/pages/create-persona/screening-history', (req, res) => {
+  const tempPersona = buildTempPersona(req.session.data)
+  const screenings = getCouldHaveHadProgrammes(tempPersona, 'screening')
+  res.render('pages/create-persona/screening-history', { screenings })
+})
+
+router.post('/pages/create-persona/screening-history', (req, res) => {
+  res.redirect('/pages/create-persona/check-answers')
+})
+
+// Page 7: Check your answers
+router.get('/pages/create-persona/check-answers', (req, res) => {
+  const data = req.session.data
+
+  const firstName = data['create-persona-first-name'] || 'Custom'
+  const lastName = data['create-persona-last-name'] || 'Persona'
+  const day = data['create-persona-dob-day'] || '1'
+  const month = data['create-persona-dob-month'] || '1'
+  const year = data['create-persona-dob-year'] || '1970'
+  const sex = data['create-persona-sex'] || 'female'
+
+  // Conditions summary
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
+  const conditionsHtml = conditionsArray.length
+    ? conditionsArray.map(c => conditionLabelsForPersona[c] || c).join('<br>')
+    : 'None'
+
+  // Vaccine history summary
+  const selectedVaccines = data['create-persona-vaccines'] || []
+  const vaccinesArray = Array.isArray(selectedVaccines) ? selectedVaccines : (selectedVaccines ? [selectedVaccines] : [])
+  const vaccinesHtml = vaccinesArray.length
+    ? vaccinesArray.map(id => {
+        const prog = programmes.find(p => p.id === id)
+        return prog ? (prog.baseName || prog.name) : id
+      }).join('<br>')
+    : 'None'
+
+  // Screening history summary
+  const selectedScreening = data['create-persona-screening'] || []
+  const screeningArray = Array.isArray(selectedScreening) ? selectedScreening : (selectedScreening ? [selectedScreening] : [])
+  const screeningsHtml = screeningArray.length
+    ? screeningArray.map(id => {
+        const prog = programmes.find(p => p.id === id)
+        return prog ? prog.name : id
+      }).join('<br>')
+    : 'None'
+
+  res.render('pages/create-persona/check-answers', {
+    summary: {
+      name: firstName + ' ' + lastName,
+      dateOfBirth: day + '/' + month + '/' + year,
+      sex: sex.charAt(0).toUpperCase() + sex.slice(1),
+      conditionsHtml,
+      vaccinesHtml,
+      screeningsHtml
+    }
+  })
+})
+
+router.post('/pages/create-persona/check-answers', (req, res) => {
+  const data = req.session.data
+
+  const firstName = data['create-persona-first-name'] || 'Custom'
+  const lastName = data['create-persona-last-name'] || 'Persona'
+  const day = data['create-persona-dob-day'] || '1'
+  const month = data['create-persona-dob-month'] || '1'
+  const year = data['create-persona-dob-year'] || '1970'
+  const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  let sex = data['create-persona-sex']
+  if (!sex) sex = Math.random() < 0.5 ? 'male' : 'female'
+
+  // Conditions: checked items are true, unchecked are false
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
+  const conditions = {}
+  for (const key of allConditionKeys) {
+    conditions[key] = conditionsArray.includes(key)
+  }
+
+  // History: generate dates for checked programmes
+  const history = {}
+  const checkedVaccines = data['create-persona-vaccines'] || []
+  const vaccinesArray = Array.isArray(checkedVaccines) ? checkedVaccines : (checkedVaccines ? [checkedVaccines] : [])
+  const checkedScreening = data['create-persona-screening'] || []
+  const screeningArray = Array.isArray(checkedScreening) ? checkedScreening : (checkedScreening ? [checkedScreening] : [])
+
+  const tempPersona = buildTempPersona(data)
+
+  // Process vaccines — expand multi-dose chains
+  for (const vaccineId of vaccinesArray) {
+    const chain = getMultiDoseChain(vaccineId)
+    const prog = programmes.find(p => p.id === vaccineId)
+    if (!prog) continue
+    const baseDate = generateHistoryDate(prog, tempPersona)
+
+    for (let i = 0; i < chain.length; i++) {
+      const doseDate = new Date(baseDate)
+      doseDate.setMonth(doseDate.getMonth() + (i * 2))
+      const today = getToday()
+      if (doseDate > today) {
+        doseDate.setTime(today.getTime())
+        doseDate.setDate(doseDate.getDate() - 7)
+      }
+      history[chain[i]] = { lastDate: doseDate.toISOString().split('T')[0] }
+    }
+  }
+
+  // Process screenings
+  for (const screeningId of screeningArray) {
+    const prog = programmes.find(p => p.id === screeningId)
+    if (!prog) continue
+    history[screeningId] = { lastDate: generateHistoryDate(prog, tempPersona) }
+  }
+
+  // Assign first GP surgery and first pharmacy from locations
+  const persona = {
+    id: firstName,
+    lastName,
+    dateOfBirth: dob,
+    sex,
+    nominatedGpSurgery: locations.find(l => l.type === 'gp-surgery').id,
+    nominatedPharmacy: locations.find(l => l.type === 'pharmacy').id,
+    conditions,
+    history
+  }
+
+  personas.push(persona)
+  req.session.data['persona'] = persona.id
+  res.redirect('/frame')
+})
+
 module.exports = router

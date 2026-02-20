@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% set mainClasses = "nhsuk-main-wrapper--s" %}
+
+{% block beforeContent %}
+  {{ backLink({
+    "text": "Back",
+    "classes": "nhsuk-u-margin-bottom-0",
+    href: "/data-settings"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">Create a persona</h1>
+
+      <h2 class="nhsuk-heading-l">Persona name</h2>
+
+      <form method="post" action="/pages/create-persona/name" novalidate="novalidate">
+
+        {{ input({
+          label: {
+            text: "First name"
+          },
+          id: "create-persona-first-name",
+          name: "create-persona-first-name",
+          value: data['create-persona-first-name']
+        }) }}
+
+        {{ input({
+          label: {
+            text: "Last name"
+          },
+          id: "create-persona-last-name",
+          name: "create-persona-last-name",
+          value: data['create-persona-last-name']
+        }) }}
+
+        {{ button({
+          text: "Continue",
+          classes: "nhsapp-button"
+        }) }}
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

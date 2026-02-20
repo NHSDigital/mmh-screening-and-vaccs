@@ -182,6 +182,7 @@ module.exports = [
   {
     id: "6-in-1-vaccine-1",
     name: "6-in-1 vaccine – dose 1 of 3",
+    baseName: "6-in-1 vaccine",
     type: "vaccine",
     description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 8 weeks.",
     settings: ["gp-surgery"],
@@ -200,6 +201,7 @@ module.exports = [
   {
     id: "6-in-1-vaccine-2",
     name: "6-in-1 vaccine – dose 2 of 3",
+    baseName: "6-in-1 vaccine",
     type: "vaccine",
     description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 12 weeks.",
     settings: ["gp-surgery"],
@@ -219,6 +221,7 @@ module.exports = [
   {
     id: "6-in-1-vaccine-3",
     name: "6-in-1 vaccine – dose 3 of 3",
+    baseName: "6-in-1 vaccine",
     type: "vaccine",
     description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 16 weeks.",
     settings: ["gp-surgery"],
@@ -238,6 +241,7 @@ module.exports = [
   {
     id: "menb-vaccine-1",
     name: "Meningitis B vaccine – dose 1 of 3",
+    baseName: "Meningitis B vaccine",
     type: "vaccine",
     description: "Protects against meningococcal group B bacteria. Usually given at 8 weeks.",
     settings: ["gp-surgery"],
@@ -256,6 +260,7 @@ module.exports = [
   {
     id: "menb-vaccine-2",
     name: "Meningitis B vaccine – dose 2 of 3",
+    baseName: "Meningitis B vaccine",
     type: "vaccine",
     description: "Protects against meningococcal group B bacteria. Usually given at 12 weeks.",
     settings: ["gp-surgery"],
@@ -275,6 +280,7 @@ module.exports = [
   {
     id: "menb-vaccine-3",
     name: "Meningitis B vaccine – dose 3 of 3",
+    baseName: "Meningitis B vaccine",
     type: "vaccine",
     description: "Protects against meningococcal group B bacteria. Booster, usually given at 1 year.",
     settings: ["gp-surgery"],
@@ -294,6 +300,7 @@ module.exports = [
   {
     id: "rotavirus-vaccine-1",
     name: "Rotavirus vaccine – dose 1 of 2",
+    baseName: "Rotavirus vaccine",
     type: "vaccine",
     description: "Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 8 weeks.",
     settings: ["gp-surgery"],
@@ -312,6 +319,7 @@ module.exports = [
   {
     id: "rotavirus-vaccine-2",
     name: "Rotavirus vaccine – dose 2 of 2",
+    baseName: "Rotavirus vaccine",
     type: "vaccine",
     description: "Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 12 weeks.",
     settings: ["gp-surgery"],
@@ -331,6 +339,7 @@ module.exports = [
   {
     id: "pcv-vaccine-1",
     name: "Pneumococcal vaccine – dose 1 of 2",
+    baseName: "Pneumococcal vaccine (baby)",
     type: "vaccine",
     description: "Protects against pneumococcal infections. Usually given at 16 weeks.",
     settings: ["gp-surgery"],
@@ -349,6 +358,7 @@ module.exports = [
   {
     id: "pcv-vaccine-2",
     name: "Pneumococcal vaccine – dose 2 of 2",
+    baseName: "Pneumococcal vaccine (baby)",
     type: "vaccine",
     description: "Protects against pneumococcal infections. Booster, usually given at 1 year.",
     settings: ["gp-surgery"],
@@ -368,6 +378,7 @@ module.exports = [
   {
     id: "mmr-vaccine-1",
     name: "MMR vaccine – dose 1 of 2",
+    baseName: "MMR vaccine",
     type: "vaccine",
     walkIn: true,
     description: "Protects against measles, mumps and rubella. Usually given at 1 year.",
@@ -387,6 +398,7 @@ module.exports = [
   {
     id: "mmr-vaccine-2",
     name: "MMR vaccine – dose 2 of 2",
+    baseName: "MMR vaccine",
     type: "vaccine",
     walkIn: true,
     description: "Protects against measles, mumps and rubella. Usually given at 3 years 4 months.",
@@ -561,6 +573,7 @@ module.exports = [
   {
     id: "shingles-vaccine-1",
     name: "Shingles vaccine – dose 1 of 2",
+    baseName: "Shingles vaccine",
     type: "vaccine",
     description: "Protects against shingles.",
     settings: ["gp-surgery", "pharmacy"],
@@ -587,6 +600,7 @@ module.exports = [
   {
     id: "shingles-vaccine-2",
     name: "Shingles vaccine – dose 2 of 2",
+    baseName: "Shingles vaccine",
     type: "vaccine",
     description: "Second dose, given 6 months after the first.",
     settings: ["gp-surgery", "pharmacy"],

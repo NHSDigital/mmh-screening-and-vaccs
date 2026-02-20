@@ -1,0 +1,52 @@
+{% extends 'layout.html' %}
+
+{% set mainClasses = "nhsuk-main-wrapper--s" %}
+
+{% block beforeContent %}
+  {{ backLink({
+    "text": "Back",
+    "classes": "nhsuk-u-margin-bottom-0",
+    href: "/pages/create-persona/date-of-birth"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <form method="post" action="/pages/create-persona/sex" novalidate="novalidate">
+
+        {{ radios({
+          idPrefix: "create-persona-sex",
+          name: "create-persona-sex",
+          fieldset: {
+            legend: {
+              text: "Sex at birth",
+              classes: "nhsuk-fieldset__legend--xl",
+              isPageHeading: true
+            }
+          },
+          items: [
+            {
+              value: "female",
+              text: "Female",
+              checked: checked("create-persona-sex", "female")
+            },
+            {
+              value: "male",
+              text: "Male",
+              checked: checked("create-persona-sex", "male")
+            }
+          ]
+        }) }}
+
+        {{ button({
+          text: "Continue",
+          classes: "nhsapp-button"
+        }) }}
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

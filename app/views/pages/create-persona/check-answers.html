@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+
+{% set mainClasses = "nhsuk-main-wrapper--s" %}
+
+{% block beforeContent %}
+  {{ backLink({
+    "text": "Back",
+    "classes": "nhsuk-u-margin-bottom-0",
+    href: "/pages/create-persona/screening-history"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">Check your answers</h1>
+
+      {{ summaryList({
+        rows: [
+          {
+            key: { text: "Name" },
+            value: { text: summary.name },
+            actions: {
+              items: [{ href: "/pages/create-persona/name", text: "Change", visuallyHiddenText: "name" }]
+            }
+          },
+          {
+            key: { text: "Date of birth" },
+            value: { text: summary.dateOfBirth },
+            actions: {
+              items: [{ href: "/pages/create-persona/date-of-birth", text: "Change", visuallyHiddenText: "date of birth" }]
+            }
+          },
+          {
+            key: { text: "Sex" },
+            value: { text: summary.sex },
+            actions: {
+              items: [{ href: "/pages/create-persona/sex", text: "Change", visuallyHiddenText: "sex" }]
+            }
+          },
+          {
+            key: { text: "Conditions" },
+            value: { html: summary.conditionsHtml },
+            actions: {
+              items: [{ href: "/pages/create-persona/conditions", text: "Change", visuallyHiddenText: "conditions" }]
+            }
+          },
+          {
+            key: { text: "Vaccine history" },
+            value: { html: summary.vaccinesHtml },
+            actions: {
+              items: [{ href: "/pages/create-persona/vaccine-history", text: "Change", visuallyHiddenText: "vaccine history" }]
+            }
+          },
+          {
+            key: { text: "Screening history" },
+            value: { html: summary.screeningsHtml },
+            actions: {
+              items: [{ href: "/pages/create-persona/screening-history", text: "Change", visuallyHiddenText: "screening history" }]
+            }
+          }
+        ]
+      }) }}
+
+      <form method="post" action="/pages/create-persona/check-answers" novalidate="novalidate">
+        {{ button({
+          text: "Create persona",
+          classes: "nhsapp-button"
+        }) }}
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

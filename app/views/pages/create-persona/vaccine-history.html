@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% set mainClasses = "nhsuk-main-wrapper--s" %}
+
+{% block beforeContent %}
+  {{ backLink({
+    "text": "Back",
+    "classes": "nhsuk-u-margin-bottom-0",
+    href: "/pages/create-persona/conditions"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <form method="post" action="/pages/create-persona/vaccine-history" novalidate="novalidate">
+
+        {% if vaccines | length %}
+          {% set vaccineItems = [] %}
+          {% for vaccine in vaccines %}
+            {% set vaccineItems = (vaccineItems.push({
+              value: vaccine.id,
+              text: vaccine.baseName or vaccine.name,
+              checked: checked("create-persona-vaccines", vaccine.id)
+            }), vaccineItems) %}
+          {% endfor %}
+
+          {{ checkboxes({
+            idPrefix: "create-persona-vaccines",
+            name: "create-persona-vaccines",
+            fieldset: {
+              legend: {
+                text: "Vaccine history",
+                classes: "nhsuk-fieldset__legend--xl",
+                isPageHeading: true
+              }
+            },
+            hint: {
+              text: "Select vaccines this person has already had."
+            },
+            items: vaccineItems
+          }) }}
+        {% else %}
+          <h1 class="nhsuk-heading-xl">Vaccine history</h1>
+          <p>No vaccines are available for this persona based on their age, sex and conditions.</p>
+        {% endif %}
+
+        {{ button({
+          text: "Continue",
+          classes: "nhsapp-button"
+        }) }}
+
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

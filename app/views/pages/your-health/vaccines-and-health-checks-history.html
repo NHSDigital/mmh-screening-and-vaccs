@@ -5,8 +5,7 @@
 {% set backLink = true %}
 {% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
 
-{% set pageHeading = "Up to date" %}
-{% set pageDescription = "Vaccines and screening you've had" %}
+{% set pageHeading = "History of vaccines and health checks" %}
 
 {% block content %}
 
@@ -16,20 +15,41 @@
         {{ pageHeading }}
       </h1>
       <p>
-        These are vaccines and health checks you’ve had and don’t need again yet.
+        Vaccines and health checks you've had.
       </p>
 
-      {% if grouped.upToDate.length %}
-        {% set cards = [] %}
-        {% for prog in grouped.upToDate %}
-          {% set cards = (cards.push({ title: prog.name, href: "/pages/your-health/programme/" + prog.id, description: prog.description }), cards) %}
+      {% if vaccines.length %}
+        <h2 class="nhsuk-heading-l">Vaccines</h2>
+        {% set rows = [] %}
+        {% for item in vaccines %}
+          {% set rows = (rows.push({
+            key: { text: item.name },
+            value: { text: item.lastDate | formatDate | nbsp }
+          }), rows) %}
         {% endfor %}
-        {{ nhsappCardGroup({
-          stacked: true,
-          cards: cards
+        {{ summaryList({
+          classes: "nhsuk-u-margin-bottom-6",
+          rows: rows
         }) }}
-      {% else %}
-        <p>You have no completed vaccines or health checks to show.</p>
+      {% endif %}
+
+      {% if screenings.length %}
+        <h2 class="nhsuk-heading-l">Health checks</h2>
+        {% set rows = [] %}
+        {% for item in screenings %}
+          {% set rows = (rows.push({
+            key: { text: item.name },
+            value: { text: item.lastDate | formatDate | nbsp }
+          }), rows) %}
+        {% endfor %}
+        {{ summaryList({
+          classes: "nhsuk-u-margin-bottom-6",
+          rows: rows
+        }) }}
+      {% endif %}
+
+      {% if not vaccines.length and not screenings.length %}
+        <p>You have no history to show.</p>
       {% endif %}
 
     </div>

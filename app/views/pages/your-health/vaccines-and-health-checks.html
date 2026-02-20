@@ -99,16 +99,19 @@
         {% endif %}
       {% endif %}
 
-      {{ programmeCards(grouped.booked, "Appointments") }}
-      {{ programmeCards(grouped.actionNeeded, "Due now") }}
-      {{ programmeCards(grouped.overdue, "Overdue") }}
-      {% if activeProxy %}
-        {{ programmeCards(grouped.unknown, "Check if these are available to " + activeProxy.id) }}
+      {% if grouped.booked.length or grouped.actionNeeded.length or grouped.overdue.length or grouped.unknown.length or grouped.upcoming.length %}
+        {{ programmeCards(grouped.booked, "Appointments") }}
+        {{ programmeCards(grouped.actionNeeded, "Due now") }}
+        {{ programmeCards(grouped.overdue, "Overdue") }}
+        {% if activeProxy %}
+          {{ programmeCards(grouped.unknown, "Check if these are available to " + activeProxy.id) }}
+        {% else %}
+          {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
+        {% endif %}
+        {{ programmeCards(grouped.upcoming, "Available in the future") }}
       {% else %}
-        {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
+        <p>You are up to date with all your vaccines and health checks.</p>
       {% endif %}
-      {{ programmeCards(grouped.upcoming, "Available in the future") }}
-
 
       {# Other pages #}
 
@@ -122,11 +125,11 @@
             {% endif %}
           </li>
         {% endif %}
-        {% if grouped.upToDate.length %}
+
           <li>
-            <a href="/pages/your-health/vaccines-and-health-checks-history">Up to date ({{ grouped.upToDate.length }})</a>
+            <a href="/pages/your-health/vaccines-and-health-checks-history" class="nhsuk-link--no-visited-state">See your history of vaccines and health checks</a>
           </li>
-        {% endif %}
+
       </ul>
 
     </div>

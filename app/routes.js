@@ -218,14 +218,36 @@ router.get('/pages/your-health/vaccines-and-health-checks-history', (req, res) =
   const persona = personas.find(p => p.id === personaId)
   const today = getToday()
 
-  const grouped = getGroupedProgrammes(persona, today)
+  // Build full history from persona's history object
+  const history = persona.history || {}
+  const historyItems = []
+  for (const [progId, entry] of Object.entries(history)) {
+    if (entry.optedOut) continue
+    if (!entry.lastDate) continue
+    const prog = programmes.find(p => p.id === progId)
+    if (!prog) continue
+    if (new Date(entry.lastDate) > today) continue
+    historyItems.push({
+      id: prog.id,
+      name: prog.name,
+      type: prog.type,
+      lastDate: entry.lastDate
+    })
+  }
+
+  // Sort by date, most recent first
+  historyItems.sort((a, b) => b.lastDate.localeCompare(a.lastDate))
+
+  const vaccines = historyItems.filter(h => h.type === 'vaccine')
+  const screenings = historyItems.filter(h => h.type === 'screening')
 
   res.render('pages/your-health/vaccines-and-health-checks-history', {
     persona: {
       ...persona,
       age: persona.dateOfBirth ? calculateAge(persona.dateOfBirth, today) : persona.age
     },
-    grouped
+    vaccines,
+    screenings
   })
 })
 
@@ -662,8 +684,38 @@ const conditionLabelsForPersona = {
   careHomeResident: 'Care home resident'
 }
 
+// Conditions stored as checkboxes (true/false)
+const checkboxConditionKeys = ['diabetes', 'clinicalRiskGroup', 'immunosuppressed']
+
+// Conditions stored as radios (yes/no/unknown → true/false/undefined)
+const radioConditionKeys = ['smoker', 'exSmoker', 'carer', 'careHomeResident', 'pregnant']
+
 // All condition keys
-const allConditionKeys = ['diabetes', 'smoker', 'exSmoker', 'pregnant', 'clinicalRiskGroup', 'carer', 'immunosuppressed', 'careHomeResident']
+const allConditionKeys = [...checkboxConditionKeys, ...radioConditionKeys]
+
+/**
+ * Read conditions from session data.
+ * Checkboxes: checked = true, unchecked = false
+ * Radios: "yes" = true, "no" = false, "unknown" or missing = undefined
+ */
+function getConditionsFromData (data) {
+  const selectedConditions = data['create-persona-conditions'] || []
+  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : (selectedConditions ? [selectedConditions] : [])
+  const conditions = {}
+
+  for (const key of checkboxConditionKeys) {
+    conditions[key] = conditionsArray.includes(key)
+  }
+
+  for (const key of radioConditionKeys) {
+    const value = data['create-persona-condition-' + key]
+    if (value === 'yes') conditions[key] = true
+    else if (value === 'no') conditions[key] = false
+    else conditions[key] = undefined
+  }
+
+  return conditions
+}
 
 /**
  * Build a temporary persona from session data for eligibility checks.
@@ -675,18 +727,12 @@ function buildTempPersona (data) {
   const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   const sex = data['create-persona-sex'] || 'female'
 
-  const selectedConditions = data['create-persona-conditions'] || []
-  const conditions = {}
-  for (const key of allConditionKeys) {
-    conditions[key] = Array.isArray(selectedConditions) ? selectedConditions.includes(key) : selectedConditions === key
-  }
-
   return {
     id: data['create-persona-first-name'] || 'Smithy',
     lastName: data['create-persona-last-name'] || 'McSmithface',
     dateOfBirth: dob,
     sex,
-    conditions,
+    conditions: getConditionsFromData(data),
     history: {}
   }
 }
@@ -863,11 +909,15 @@ router.get('/pages/create-persona/check-answers', (req, res) => {
   const sex = data['create-persona-sex'] || 'female'
 
   // Conditions summary
-  const selectedConditions = data['create-persona-conditions'] || []
-  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
-  const conditionsHtml = conditionsArray.length
-    ? conditionsArray.map(c => conditionLabelsForPersona[c] || c).join('<br>')
-    : 'None'
+  const conditions = getConditionsFromData(data)
+  const conditionLines = []
+  for (const key of allConditionKeys) {
+    const label = conditionLabelsForPersona[key] || key
+    if (conditions[key] === true) conditionLines.push(label + ': Yes')
+    else if (conditions[key] === false) conditionLines.push(label + ': No')
+    else conditionLines.push(label + ': Unknown')
+  }
+  const conditionsHtml = conditionLines.join('<br>')
 
   // Vaccine history summary
   const selectedVaccines = data['create-persona-vaccines'] || []
@@ -913,13 +963,8 @@ router.post('/pages/create-persona/check-answers', (req, res) => {
   let sex = data['create-persona-sex']
   if (!sex) sex = Math.random() < 0.5 ? 'male' : 'female'
 
-  // Conditions: checked items are true, unchecked are false
-  const selectedConditions = data['create-persona-conditions'] || []
-  const conditionsArray = Array.isArray(selectedConditions) ? selectedConditions : [selectedConditions]
-  const conditions = {}
-  for (const key of allConditionKeys) {
-    conditions[key] = conditionsArray.includes(key)
-  }
+  // Conditions from checkboxes and radios
+  const conditions = getConditionsFromData(data)
 
   // History: generate dates for checked programmes
   const history = {}

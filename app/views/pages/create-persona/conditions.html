@@ -14,69 +14,182 @@
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-two-thirds">
 
+      <h1 class="nhsuk-heading-xl">Conditions</h1>
+
       <form method="post" action="/pages/create-persona/conditions" novalidate="novalidate">
-
-        {% set conditionItems = [
-          {
-            value: "diabetes",
-            text: "Diabetes",
-            checked: checked("create-persona-conditions", "diabetes")
-          },
-          {
-            value: "smoker",
-            text: "Current smoker",
-            checked: checked("create-persona-conditions", "smoker")
-          },
-          {
-            value: "exSmoker",
-            text: "Ex-smoker",
-            checked: checked("create-persona-conditions", "exSmoker")
-          },
-          {
-            value: "clinicalRiskGroup",
-            text: "Long-term health condition",
-            checked: checked("create-persona-conditions", "clinicalRiskGroup")
-          },
-          {
-            value: "carer",
-            text: "Unpaid carer",
-            checked: checked("create-persona-conditions", "carer")
-          },
-          {
-            value: "immunosuppressed",
-            text: "Weakened immune system",
-            checked: checked("create-persona-conditions", "immunosuppressed")
-          },
-          {
-            value: "careHomeResident",
-            text: "Care home resident",
-            checked: checked("create-persona-conditions", "careHomeResident")
-          }
-        ] %}
-
-        {% if sex !== "male" %}
-          {% set conditionItems = (conditionItems.push({
-            value: "pregnant",
-            text: "Pregnant",
-            checked: checked("create-persona-conditions", "pregnant")
-          }), conditionItems) %}
-        {% endif %}
 
         {{ checkboxes({
           idPrefix: "create-persona-conditions",
           name: "create-persona-conditions",
           fieldset: {
             legend: {
-              text: "Conditions",
-              classes: "nhsuk-fieldset__legend--xl",
-              isPageHeading: true
+              text: "Confirmed conditions",
+              classes: "nhsuk-fieldset__legend--m"
             }
           },
           hint: {
             text: "Select all that apply."
           },
-          items: conditionItems
+          items: [
+            {
+              value: "diabetes",
+              text: "Diabetes",
+              checked: checked("create-persona-conditions", "diabetes")
+            },
+            {
+              value: "clinicalRiskGroup",
+              text: "Long-term health condition",
+              checked: checked("create-persona-conditions", "clinicalRiskGroup")
+            },
+            {
+              value: "immunosuppressed",
+              text: "Weakened immune system",
+              checked: checked("create-persona-conditions", "immunosuppressed")
+            }
+          ]
         }) }}
+
+        {{ radios({
+          idPrefix: "create-persona-condition-smoker",
+          name: "create-persona-condition-smoker",
+          fieldset: {
+            legend: {
+              text: "Do they currently smoke?",
+              classes: "nhsuk-fieldset__legend--m"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: checked("create-persona-condition-smoker", "yes")
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: checked("create-persona-condition-smoker", "no")
+            },
+            {
+              value: "unknown",
+              text: "Don't know",
+              checked: checked("create-persona-condition-smoker", "unknown")
+            }
+          ]
+        }) }}
+
+        {{ radios({
+          idPrefix: "create-persona-condition-exSmoker",
+          name: "create-persona-condition-exSmoker",
+          fieldset: {
+            legend: {
+              text: "Have they smoked in the past?",
+              classes: "nhsuk-fieldset__legend--m"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: checked("create-persona-condition-exSmoker", "yes")
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: checked("create-persona-condition-exSmoker", "no")
+            },
+            {
+              value: "unknown",
+              text: "Don't know",
+              checked: checked("create-persona-condition-exSmoker", "unknown")
+            }
+          ]
+        }) }}
+
+        {{ radios({
+          idPrefix: "create-persona-condition-carer",
+          name: "create-persona-condition-carer",
+          fieldset: {
+            legend: {
+              text: "Are they an unpaid carer?",
+              classes: "nhsuk-fieldset__legend--m"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: checked("create-persona-condition-carer", "yes")
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: checked("create-persona-condition-carer", "no")
+            },
+            {
+              value: "unknown",
+              text: "Don't know",
+              checked: checked("create-persona-condition-carer", "unknown")
+            }
+          ]
+        }) }}
+
+        {{ radios({
+          idPrefix: "create-persona-condition-careHomeResident",
+          name: "create-persona-condition-careHomeResident",
+          fieldset: {
+            legend: {
+              text: "Do they live in a care home?",
+              classes: "nhsuk-fieldset__legend--m"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              checked: checked("create-persona-condition-careHomeResident", "yes")
+            },
+            {
+              value: "no",
+              text: "No",
+              checked: checked("create-persona-condition-careHomeResident", "no")
+            },
+            {
+              value: "unknown",
+              text: "Don't know",
+              checked: checked("create-persona-condition-careHomeResident", "unknown")
+            }
+          ]
+        }) }}
+
+        {% if sex !== "male" %}
+          {{ radios({
+            idPrefix: "create-persona-condition-pregnant",
+            name: "create-persona-condition-pregnant",
+            fieldset: {
+              legend: {
+                text: "Are they currently pregnant?",
+                classes: "nhsuk-fieldset__legend--m"
+              }
+            },
+            items: [
+              {
+                value: "yes",
+                text: "Yes",
+                checked: checked("create-persona-condition-pregnant", "yes")
+              },
+              {
+                value: "no",
+                text: "No",
+                checked: checked("create-persona-condition-pregnant", "no")
+              },
+              {
+                value: "unknown",
+                text: "Don't know",
+                checked: checked("create-persona-condition-pregnant", "unknown")
+              }
+            ]
+          }) }}
+        {% endif %}
 
         {{ button({
           text: "Continue",

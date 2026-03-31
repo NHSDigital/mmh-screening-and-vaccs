@@ -6,7 +6,7 @@
 {% set backLinkURL = "/pages/home-p9" %}
 
 {% set pageHeadingHtml %}
-  Vaccinations and {{ "health checks" | nbsp }}
+  Check and book vaccinations and {{ "health checks" | nbsp }}
 {% endset %}
 {% set pageDescription = "What you need to book, what's coming up, and what you've had" %}
 
@@ -56,27 +56,6 @@
         </p>
       {% endif %}
 
-      {% set actionNeededCount = 1 %}
-
-      {{ nhsappCardGroup({
-        stacked: true,
-        cards: [
-          {
-            title: 'Check and book vaccinations and health checks',
-            href: 'check-and-book',
-            badgeLarge: {
-              count: actionNeededCount,
-              label: "available"
-            } if actionNeededCount > 0
-          },
-          {
-            title: 'View your vaccination and health check',
-            href: '#'
-          }
-        ]
-      }) }}
-
-      {% if false %}
       {# Proxy switching #}
 
       {% if proxies.length %}
@@ -152,7 +131,6 @@
           </li>
 
       </ul>
-    {% endif %}
 
     </div>
   </div>

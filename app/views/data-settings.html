@@ -219,6 +219,34 @@
 
         <hr>
 
+        {{ radios({
+          "idPrefix": "screeningLayout",
+          "name": "screeningLayout",
+          "fieldset": {
+            "legend": {
+              "text": "Screening and vaccines layout",
+              "classes": "nhsuk-fieldset__legend--m"
+            }
+          },
+          "hint": {
+            "text": "Combined shows screening and vaccines on one page. Separate puts them on different pages."
+          },
+          "items": [
+            {
+              "value": "combined",
+              "text": "Combined",
+              checked: checked("screeningLayout", "combined")
+            },
+            {
+              "value": "separate",
+              "text": "Separate",
+              checked: checked("screeningLayout", "separate")
+            }
+          ]
+        }) }}
+
+        <hr>
+
         <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-3">Errors</h2>
 
         {{ radios({

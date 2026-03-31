@@ -1,0 +1,57 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/home-p9" %}
+
+{% set pageHeadingHtml %}
+  Health checks and screening
+{% endset %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      {% if activeProxy %}
+        <span class="nhsuk-caption-xl">{{ activeProxy.id }} {{ activeProxy.lastName }}</span>
+      {% endif %}
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeadingHtml | safe }}
+      </h1>
+      {% if activeProxy %}
+        <p>
+          Health checks and screening for {{ activeProxy.id }}, based on their age and health record.
+        </p>
+      {% else %}
+        <p>
+          Look after your health by catching illness early with checks offered to you by the NHS.
+        </p>
+      {% endif %}
+
+      {% set screeningActionNeeded = [] %}
+      {% for prog in grouped.actionNeeded %}{% if prog.type === "screening" %}{% set screeningActionNeeded = (screeningActionNeeded.push(prog), screeningActionNeeded) %}{% endif %}{% endfor %}
+      {% set screeningActionNeededCount = screeningActionNeeded.length %}
+
+      {{ nhsappCardGroup({
+        stacked: true,
+        cards: [
+          {
+            title: 'Check and book health checks',
+            href: '/pages/your-health/check-and-book-screening',
+            badgeLarge: {
+              count: screeningActionNeededCount,
+              label: "available"
+            } if screeningActionNeededCount > 0
+          },
+          {
+            title: 'Health check results',
+            href: '#'
+          }
+        ]
+      }) }}
+
+    </div>
+  </div>
+
+{% endblock %}

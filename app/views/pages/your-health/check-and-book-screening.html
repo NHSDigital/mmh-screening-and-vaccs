@@ -1,0 +1,77 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/screening" %}
+
+{% set pageHeadingHtml %}
+  Health checks and screening
+{% endset %}
+
+{% macro programmeCards(programmes, heading) %}
+  {% if programmes.length %}
+    {% set cards = [] %}
+    {% for prog in programmes %}
+      {% set cardHtml %}
+        <div class="nhsapp-card__below">
+          {% if prog.description is iterable and prog.description is not string %}
+            {% for para in prog.description %}
+              <p class="nhsapp-card__description">{{ para }}</p>
+            {% endfor %}
+          {% else %}
+            <p class="nhsapp-card__description">{{ prog.description }}</p>
+          {% endif %}
+          {% if prog.statusText and prog.statusText !== (prog.description[0] if prog.description is iterable and prog.description is not string else prog.description) %}
+            <p class="nhsapp-card__description">{{ prog.statusText }}</p>
+          {% endif %}
+          {% if prog.eligibilityReasons.length %}
+            <p class="nhsapp-card__description">Available because {{ prog.eligibilityReasons | join(' and ') }}.</p>
+          {% endif %}
+        </div>
+      {% endset %}
+      {% set cardHref = prog.link if prog.link else "/pages/your-health/programme/" + prog.id %}
+      {% set cards = (cards.push({ title: prog.name, href: cardHref, descriptionHtml: cardHtml }), cards) %}
+    {% endfor %}
+    {{ nhsappCardGroup({
+      stacked: true,
+      heading: heading,
+      cards: cards
+    }) }}
+  {% endif %}
+{% endmacro %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeadingHtml | safe }}
+      </h1>
+      <p>Screening and health checks available to you based on your age and health record.</p>
+
+      {% set screeningBooked = [] %}
+      {% for prog in grouped.booked %}{% if prog.type === "screening" %}{% set screeningBooked = (screeningBooked.push(prog), screeningBooked) %}{% endif %}{% endfor %}
+      {% set screeningActionNeeded = [] %}
+      {% for prog in grouped.actionNeeded %}{% if prog.type === "screening" %}{% set screeningActionNeeded = (screeningActionNeeded.push(prog), screeningActionNeeded) %}{% endif %}{% endfor %}
+      {% set screeningOverdue = [] %}
+      {% for prog in grouped.overdue %}{% if prog.type === "screening" %}{% set screeningOverdue = (screeningOverdue.push(prog), screeningOverdue) %}{% endif %}{% endfor %}
+      {% set screeningUnknown = [] %}
+      {% for prog in grouped.unknown %}{% if prog.type === "screening" %}{% set screeningUnknown = (screeningUnknown.push(prog), screeningUnknown) %}{% endif %}{% endfor %}
+      {% set screeningUpcoming = [] %}
+      {% for prog in grouped.upcoming %}{% if prog.type === "screening" %}{% set screeningUpcoming = (screeningUpcoming.push(prog), screeningUpcoming) %}{% endif %}{% endfor %}
+
+      {% if screeningBooked.length or screeningActionNeeded.length or screeningOverdue.length or screeningUnknown.length or screeningUpcoming.length %}
+        {{ programmeCards(screeningBooked, "Appointments") }}
+        {{ programmeCards(screeningActionNeeded, "Due now") }}
+        {{ programmeCards(screeningOverdue, "Overdue") }}
+        {{ programmeCards(screeningUnknown, "Check if these are available to you") }}
+        {{ programmeCards(screeningUpcoming, "Available in the future") }}
+      {% else %}
+        <p>You are up to date with all your health checks and screening.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

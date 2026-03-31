@@ -64,6 +64,8 @@ router.use((req, res, next) => {
     } : null
   }
 
+  res.locals.screeningLayout = req.session.data['screeningLayout'] || 'combined'
+
   next()
 })
 
@@ -95,9 +97,13 @@ router.get('/pages/home-p9', (req, res) => {
 
   const grouped = getGroupedProgrammes(persona, today)
   const actionNeededCount = grouped.actionNeeded.length
+  const vaccineActionNeededCount = grouped.actionNeeded.filter(p => p.type === 'vaccine').length
+  const screeningActionNeededCount = grouped.actionNeeded.filter(p => p.type === 'screening').length
 
   res.render('pages/home-p9', {
-    actionNeededCount
+    actionNeededCount,
+    vaccineActionNeededCount,
+    screeningActionNeededCount
   })
 })
 

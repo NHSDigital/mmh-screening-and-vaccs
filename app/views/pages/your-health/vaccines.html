@@ -1,0 +1,57 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/home-p9" %}
+
+{% set pageHeadingHtml %}
+  Vaccinations
+{% endset %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      {% if activeProxy %}
+        <span class="nhsuk-caption-xl">{{ activeProxy.id }} {{ activeProxy.lastName }}</span>
+      {% endif %}
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeadingHtml | safe }}
+      </h1>
+      {% if activeProxy %}
+        <p>
+          Vaccines for {{ activeProxy.id }}, based on their age and health record.
+        </p>
+      {% else %}
+        <p>
+          Protect yourself from serious illness with vaccines offered to you by the NHS.
+        </p>
+      {% endif %}
+
+      {% set vaccineActionNeeded = [] %}
+      {% for prog in grouped.actionNeeded %}{% if prog.type === "vaccine" %}{% set vaccineActionNeeded = (vaccineActionNeeded.push(prog), vaccineActionNeeded) %}{% endif %}{% endfor %}
+      {% set vaccineActionNeededCount = vaccineActionNeeded.length %}
+
+      {{ nhsappCardGroup({
+        stacked: true,
+        cards: [
+          {
+            title: 'Check and book vaccinations',
+            href: '/pages/your-health/check-and-book-vaccines',
+            badgeLarge: {
+              count: vaccineActionNeededCount,
+              label: "available"
+            } if vaccineActionNeededCount > 0
+          },
+          {
+            title: 'Vaccination record',
+            href: '#'
+          }
+        ]
+      }) }}
+
+    </div>
+  </div>
+
+{% endblock %}

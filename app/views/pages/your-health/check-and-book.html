@@ -106,38 +106,62 @@
       {% endif %}
     {% endif %}
 
-      {% if grouped.booked.length or grouped.actionNeeded.length or grouped.overdue.length or grouped.unknown.length or grouped.upcoming.length %}
-        {{ programmeCards(grouped.booked, "Appointments") }}
-        {{ programmeCards(grouped.actionNeeded, "Due now") }}
-        {{ programmeCards(grouped.overdue, "Overdue") }}
-        {% if activeProxy %}
-          {{ programmeCards(grouped.unknown, "Check if these are available to " + activeProxy.id) }}
-        {% else %}
-          {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
-        {% endif %}
-        {{ programmeCards(grouped.upcoming, "Available in the future") }}
+      {% if screeningLayout === "separate" %}
+
+        {# Separate mode: link to individual screening and vaccines pages #}
+        {{ nhsappCardGroup({
+          stacked: true,
+          cards: [
+            {
+              title: "Vaccinations",
+              href: "/pages/your-health/check-and-book-vaccines",
+              description: "Vaccines available to you based on your age and health record."
+            },
+            {
+              title: "Health checks and screening",
+              href: "/pages/your-health/check-and-book-screening",
+              description: "Screening and health checks available to you based on your age and health record."
+            }
+          ]
+        }) }}
+
       {% else %}
-        <p>You are up to date with all your vaccines and health checks.</p>
-      {% endif %}
 
-      {# Other pages #}
-
-      <ul class="nhsuk-list nhsuk-u-margin-top-6">
-        {% if grouped.optedOut.length %}
-          <li>
-            {% if activeProxy %}
-              <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things {{ activeProxy.id }} has opted out of ({{ grouped.optedOut.length }})</a>
-            {% else %}
-              <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things you’ve opted out of ({{ grouped.optedOut.length }})</a>
-            {% endif %}
-          </li>
+        {# Combined mode: show all programmes together #}
+        {% if grouped.booked.length or grouped.actionNeeded.length or grouped.overdue.length or grouped.unknown.length or grouped.upcoming.length %}
+          {{ programmeCards(grouped.booked, "Appointments") }}
+          {{ programmeCards(grouped.actionNeeded, "Due now") }}
+          {{ programmeCards(grouped.overdue, "Overdue") }}
+          {% if activeProxy %}
+            {{ programmeCards(grouped.unknown, "Check if these are available to " + activeProxy.id) }}
+          {% else %}
+            {{ programmeCards(grouped.unknown, "Check if these are available to you") }}
+          {% endif %}
+          {{ programmeCards(grouped.upcoming, "Available in the future") }}
+        {% else %}
+          <p>You are up to date with all your vaccines and health checks.</p>
         {% endif %}
 
-          <li>
-            <a href="/pages/your-health/vaccines-and-health-checks-history" class="nhsuk-link--no-visited-state">See your history of vaccines and health checks</a>
-          </li>
+        {# Other pages #}
 
-      </ul>
+        <ul class="nhsuk-list nhsuk-u-margin-top-6">
+          {% if grouped.optedOut.length %}
+            <li>
+              {% if activeProxy %}
+                <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things {{ activeProxy.id }} has opted out of ({{ grouped.optedOut.length }})</a>
+              {% else %}
+                <a href="/pages/your-health/vaccines-and-health-checks-opted-out">Things you’ve opted out of ({{ grouped.optedOut.length }})</a>
+              {% endif %}
+            </li>
+          {% endif %}
+
+            <li>
+              <a href="/pages/your-health/vaccines-and-health-checks-history" class="nhsuk-link--no-visited-state">See your history of vaccines and health checks</a>
+            </li>
+
+        </ul>
+
+      {% endif %}
 
     </div>
   </div>

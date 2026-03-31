@@ -16,34 +16,36 @@
         nhsNumber: data['nhsNumber']
       })}}
 
+      {% set homeCards = [] %}
+      {% set homeCards = (homeCards.push({ title: "Prescriptions", href: "#" }), homeCards) %}
+      {% set homeCards = (homeCards.push({ title: "Appointments", href: "#" }), homeCards) %}
+      {% set homeCards = (homeCards.push({ title: "Test results", href: "#" }), homeCards) %}
+
+      {% if screeningLayout === "separate" %}
+        {% set vaccineCard = { title: "Vaccinations", href: "/pages/your-health/vaccines" } %}
+        {% if vaccineActionNeededCount > 0 %}
+          {% set vaccineCard = { title: "Vaccinations", href: "/pages/your-health/vaccines", badgeLarge: { count: vaccineActionNeededCount, label: "available" } } %}
+        {% endif %}
+        {% set homeCards = (homeCards.push(vaccineCard), homeCards) %}
+
+        {% set screeningCard = { title: "Health checks and screening", href: "/pages/your-health/screening" } %}
+        {% if screeningActionNeededCount > 0 %}
+          {% set screeningCard = { title: "Health checks and screening", href: "/pages/your-health/screening", badgeLarge: { count: screeningActionNeededCount, label: "available" } } %}
+        {% endif %}
+        {% set homeCards = (homeCards.push(screeningCard), homeCards) %}
+      {% else %}
+        {% set combinedCard = { title: "Vaccinations and health checks", href: "/pages/your-health/vaccines-and-health-checks" } %}
+        {% if actionNeededCount > 0 %}
+          {% set combinedCard = { title: "Vaccinations and health checks", href: "/pages/your-health/vaccines-and-health-checks", badgeLarge: { count: actionNeededCount, label: "available" } } %}
+        {% endif %}
+        {% set homeCards = (homeCards.push(combinedCard), homeCards) %}
+      {% endif %}
+
+      {% set homeCards = (homeCards.push({ title: "Documents", href: "#" }), homeCards) %}
+
       {{ nhsappCardGroup({
         stacked: true,
-        cards: [
-          {
-            title: "Prescriptions",
-            href: "#"
-          },
-          {
-            title: "Appointments",
-            href: "#"
-          },
-          {
-            title: "Test results",
-            href: "#"
-          },
-          {
-            title: "Vaccinations and health checks",
-            href: "/pages/your-health/vaccines-and-health-checks",
-            badgeLarge: {
-              count: actionNeededCount,
-              label: "available"
-            } if actionNeededCount > 0
-          },
-          {
-            title: "Documents",
-            href: "#"
-          }
-        ]
+        cards: homeCards
       }) }}
 
       <hr>

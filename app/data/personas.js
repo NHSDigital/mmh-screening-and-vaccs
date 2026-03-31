@@ -28,6 +28,9 @@ module.exports = [
       // BOOKED — future date means appointment is booked
       "breast-cancer":           { lastDate: "2026-03-10" },
 
+      // COMPLETE — recently done
+      "nhs-health-check":        { lastDate: "2024-06-15" },
+
       // DUE — interval has passed
       "diabetic-eye-screening":  { lastDate: "2024-01-20" },
 
@@ -71,6 +74,39 @@ module.exports = [
   },
 
   {
+    // David – 70-year-old with several things due
+    id: "David",
+    lastName: "Thompson",
+    dateOfBirth: "1955-09-10", // 70 years old
+    sex: "male",
+    nominatedGpSurgery: "ranworth-surgery",
+    nominatedPharmacy: "pier-avenue-pharmacy",
+
+    conditions: {
+      diabetes: false,
+      smoker: undefined,         // unknown — lung screening shows as unknown
+      exSmoker: undefined,       // unknown — lung screening shows as unknown
+      pregnant: false,
+      clinicalRiskGroup: false,
+      carer: false,
+      immunosuppressed: false,
+      careHomeResident: false
+    },
+
+    history: {
+      // DUE — interval passed (2 years + ~2.5 months ago)
+      "bowel-cancer":            { lastDate: "2024-03-25" },
+
+      // Shingles dose 1 done, dose 2 due
+      "shingles-vaccine-1":      { lastDate: "2025-06-17" }
+
+      // No flu-vaccine entry → due (seasonal, in window)
+      // No lung-screening entry + unknown conditions → unknown
+      // RSV requires 75+ → upcoming
+    }
+  },
+
+  {
     // Amelia – healthy 35-year-old with children
     id: "Amelia",
     lastName: "Johnson",
@@ -83,7 +119,7 @@ module.exports = [
       diabetes: false,
       smoker: undefined,              // don't know
       exSmoker: undefined,            // don't know,
-      pregnant: undefined,            // don't know
+      pregnant: false,                // confirmed not pregnant
       clinicalRiskGroup: undefined,   // don't know
       carer: undefined,               // don't know
       immunosuppressed: undefined,    // don't know
@@ -91,7 +127,7 @@ module.exports = [
     },
 
     history: {
-      "cervical-screening":      { lastDate: "2020-03-15" }
+      "cervical-screening":      { lastDate: "2021-03-20" }
     },
 
     proxies: [

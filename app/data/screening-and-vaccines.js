@@ -31,7 +31,7 @@ module.exports = [
     id: "bowel-cancer",
     name: "Bowel cancer screening",
     type: "screening",
-    description: "A home test kit to check for early signs of bowel cancer.",
+    description: ["A home test kit to check for early signs of bowel cancer."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -50,7 +50,7 @@ module.exports = [
     id: "breast-cancer",
     name: "Breast cancer screening",
     type: "screening",
-    description: "A mammogram to check for early signs of breast cancer.",
+    description: ["A mammogram to check for early signs of breast cancer."],
     settings: ["hospital", "clinic"],
     overdueDays: 90,
 
@@ -68,8 +68,14 @@ module.exports = [
   {
     id: "cervical-screening",
     name: "Cervical screening",
+    link: "how-to-book-cervical",
     type: "screening",
-    description: "A test to check for changes in cells that could lead to cervical cancer.",
+    description:
+      [
+        "Due every 5 years for anyone with a cervix aged 25 to 64.",
+        "Regular screening is essential even if you've had the HPV vaccine, as it does not protect you from all types of HPV. HPV is linked to nearly all cervical cancers.",
+        "Contact your GP to book an appointment."
+      ],
     settings: ["gp-surgery", "clinic"],
     overdueDays: 90,
 
@@ -89,7 +95,7 @@ module.exports = [
     id: "home-cervical-testing",
     name: "Home cervical testing",
     type: "screening",
-    description: "A home test kit to check for early signs of cervical cancer.",
+    description: ["A home test kit to check for early signs of cervical cancer."],
     settings: ["home"],
     overdueDays: 90,
 
@@ -110,7 +116,7 @@ module.exports = [
     id: "lung-screening",
     name: "Lung cancer screening",
     type: "screening",
-    description: "A low-dose CT scan to check for early signs of lung cancer.",
+    description: ["A low-dose CT scan to check for early signs of lung cancer."],
     settings: ["hospital"],
     overdueDays: 90,
 
@@ -138,7 +144,7 @@ module.exports = [
     id: "diabetic-eye-screening",
     name: "Diabetic eye screening",
     type: "screening",
-    description: "A check for damage to the back of your eyes caused by diabetes.",
+    description: ["A check for damage to the back of your eyes caused by diabetes."],
     settings: ["hospital", "clinic"],
     overdueDays: 90,
 
@@ -158,10 +164,29 @@ module.exports = [
   },
 
   {
+    id: "nhs-health-check",
+    name: "NHS Health Check",
+    type: "screening",
+    description: ["A check of your heart and circulation health, to help spot early signs of stroke, kidney disease, heart disease and diabetes."],
+    settings: ["gp-surgery"],
+    overdueDays: 90,
+
+    eligibility: {
+      age: { min: 40, max: 74 },
+      sex: "all"
+    },
+
+    schedule: {
+      type: "recurring",
+      intervalYears: 5
+    }
+  },
+
+  {
     id: "aaa-screening",
     name: "Abdominal aortic aneurysm (AAA) screening",
     type: "screening",
-    description: "A one-off ultrasound scan to check for a swelling in the main blood vessel in your tummy.",
+    description: ["A one-off ultrasound scan to check for a swelling in the main blood vessel in your tummy."],
     settings: ["hospital"],
     overdueDays: 90,
 
@@ -184,7 +209,7 @@ module.exports = [
     name: "6-in-1 vaccine – dose 1 of 3",
     baseName: "6-in-1 vaccine",
     type: "vaccine",
-    description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 8 weeks.",
+    description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -203,7 +228,7 @@ module.exports = [
     name: "6-in-1 vaccine – dose 2 of 3",
     baseName: "6-in-1 vaccine",
     type: "vaccine",
-    description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 12 weeks.",
+    description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -223,7 +248,7 @@ module.exports = [
     name: "6-in-1 vaccine – dose 3 of 3",
     baseName: "6-in-1 vaccine",
     type: "vaccine",
-    description: "Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 16 weeks.",
+    description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 16 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -243,7 +268,7 @@ module.exports = [
     name: "Meningitis B vaccine – dose 1 of 3",
     baseName: "Meningitis B vaccine",
     type: "vaccine",
-    description: "Protects against meningococcal group B bacteria. Usually given at 8 weeks.",
+    description: ["Protects against meningococcal group B bacteria. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -262,7 +287,7 @@ module.exports = [
     name: "Meningitis B vaccine – dose 2 of 3",
     baseName: "Meningitis B vaccine",
     type: "vaccine",
-    description: "Protects against meningococcal group B bacteria. Usually given at 12 weeks.",
+    description: ["Protects against meningococcal group B bacteria. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -282,7 +307,7 @@ module.exports = [
     name: "Meningitis B vaccine – dose 3 of 3",
     baseName: "Meningitis B vaccine",
     type: "vaccine",
-    description: "Protects against meningococcal group B bacteria. Booster, usually given at 1 year.",
+    description: ["Protects against meningococcal group B bacteria. Booster, usually given at 1 year."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -302,7 +327,7 @@ module.exports = [
     name: "Rotavirus vaccine – dose 1 of 2",
     baseName: "Rotavirus vaccine",
     type: "vaccine",
-    description: "Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 8 weeks.",
+    description: ["Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -321,7 +346,7 @@ module.exports = [
     name: "Rotavirus vaccine – dose 2 of 2",
     baseName: "Rotavirus vaccine",
     type: "vaccine",
-    description: "Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 12 weeks.",
+    description: ["Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -341,7 +366,7 @@ module.exports = [
     name: "Pneumococcal vaccine – dose 1 of 2",
     baseName: "Pneumococcal vaccine (baby)",
     type: "vaccine",
-    description: "Protects against pneumococcal infections. Usually given at 16 weeks.",
+    description: ["Protects against pneumococcal infections. Usually given at 16 weeks."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -360,7 +385,7 @@ module.exports = [
     name: "Pneumococcal vaccine – dose 2 of 2",
     baseName: "Pneumococcal vaccine (baby)",
     type: "vaccine",
-    description: "Protects against pneumococcal infections. Booster, usually given at 1 year.",
+    description: ["Protects against pneumococcal infections. Booster, usually given at 1 year."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -381,7 +406,7 @@ module.exports = [
     baseName: "MMR vaccine",
     type: "vaccine",
     walkIn: true,
-    description: "Protects against measles, mumps and rubella. Usually given at 1 year.",
+    description: ["Protects against measles, mumps and rubella. Usually given at 1 year."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -401,7 +426,7 @@ module.exports = [
     baseName: "MMR vaccine",
     type: "vaccine",
     walkIn: true,
-    description: "Protects against measles, mumps and rubella. Usually given at 3 years 4 months.",
+    description: ["Protects against measles, mumps and rubella. Usually given at 3 years 4 months."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -420,7 +445,7 @@ module.exports = [
     id: "preschool-booster",
     name: "Pre-school booster (dTaP/IPV)",
     type: "vaccine",
-    description: "A single dose to boost protection against diphtheria, tetanus, whooping cough and polio.",
+    description: ["A single dose to boost protection against diphtheria, tetanus, whooping cough and polio."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -443,7 +468,7 @@ module.exports = [
     name: "Flu vaccine (children)",
     type: "vaccine",
     seasonalWindow: { start: "09-01", end: "03-31" },
-    description: "A nasal spray given each autumn.",
+    description: ["A nasal spray given each autumn."],
     settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
@@ -461,7 +486,7 @@ module.exports = [
     id: "hpv-vaccine",
     name: "HPV vaccine",
     type: "vaccine",
-    description: "Protects against cancers caused by HPV. Usually given in Year 8.",
+    description: ["Protects against cancers caused by HPV. Usually given in Year 8."],
     settings: ["gp-surgery", "clinic"],
     overdueDays: 90,
 
@@ -479,7 +504,7 @@ module.exports = [
     id: "teenage-booster",
     name: "Teenage booster",
     type: "vaccine",
-    description: "Boosts protection against tetanus, diphtheria and polio. Given in Year 9.",
+    description: ["Boosts protection against tetanus, diphtheria and polio. Given in Year 9."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -497,7 +522,7 @@ module.exports = [
     id: "menacwy-vaccine",
     name: "Meningitiss, sepsis and septicaemia vaccine",
     type: "vaccine",
-    description: "Protects against meningitis and septicaemia (blood poisoning). Usually given in Year 9.",
+    description: ["Protects against meningitis and septicaemia (blood poisoning). Usually given in Year 9."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -519,9 +544,10 @@ module.exports = [
     id: "flu-vaccine",
     name: "Flu vaccine",
     type: "vaccine",
+    link: "how-to-book-flu",
     seasonalWindow: { start: "09-01", end: "03-31" },
     walkIn: true,
-    description: "An annual vaccine, usually available from autumn.",
+    description: ["An annual vaccine, usually available from autumn."],
     settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
@@ -548,7 +574,7 @@ module.exports = [
     name: "Pneumococcal vaccine",
     type: "vaccine",
     walkIn: true,
-    description: "A one-off vaccine to protect against pneumococcal infections.",
+    description: ["A one-off vaccine to protect against pneumococcal infections."],
     settings: ["gp-surgery", "pharmacy"],
     overdueDays: 90,
 
@@ -575,7 +601,7 @@ module.exports = [
     name: "Shingles vaccine – dose 1 of 2",
     baseName: "Shingles vaccine",
     type: "vaccine",
-    description: "Protects against shingles.",
+    description: ["Protects against shingles."],
     settings: ["gp-surgery", "pharmacy"],
     overdueDays: 90,
 
@@ -602,7 +628,7 @@ module.exports = [
     name: "Shingles vaccine – dose 2 of 2",
     baseName: "Shingles vaccine",
     type: "vaccine",
-    description: "Second dose, given 6 months after the first.",
+    description: ["Second dose, given 6 months after the first."],
     settings: ["gp-surgery", "pharmacy"],
     overdueDays: 90,
 
@@ -630,7 +656,7 @@ module.exports = [
     name: "RSV vaccine",
     type: "vaccine",
     walkIn: true,
-    description: "A one-off vaccine to protect against respiratory syncytial virus.",
+    description: ["A one-off vaccine to protect against respiratory syncytial virus."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -650,7 +676,7 @@ module.exports = [
     type: "vaccine",
     seasonalWindow: { start: "09-01", end: "12-31" },
     walkIn: true,
-    description: "A seasonal vaccine, usually available from autumn.",
+    description: ["A seasonal vaccine, usually available from autumn."],
     settings: ["gp-surgery", "pharmacy"],
 
     eligibility: {
@@ -680,7 +706,7 @@ module.exports = [
     id: "whooping-cough-vaccine-pregnancy",
     name: "Whooping cough vaccine",
     type: "vaccine",
-    description: "Recommended from 16 weeks of pregnancy to protect your baby.",
+    description: ["Recommended from 16 weeks of pregnancy to protect your baby."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 
@@ -706,7 +732,7 @@ module.exports = [
     id: "rsv-vaccine-pregnancy",
     name: "RSV vaccine (pregnancy)",
     type: "vaccine",
-    description: "Recommended from 28 weeks of pregnancy to protect your baby against RSV.",
+    description: ["Recommended from 28 weeks of pregnancy to protect your baby against RSV."],
     settings: ["gp-surgery"],
     overdueDays: 90,
 

@@ -1,0 +1,140 @@
+{% extends 'layout-app.html' %}
+
+{% from "nhsuk/components/action-link/macro.njk" import actionLink %}
+{% from "nhsuk/components/do-dont-list/macro.njk" import list %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/check-and-book" %}
+
+{% set pageHeading = "How to book cervical screening" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+
+      <h1 class="nhsuk-heading-xl">How to book cervical screening</h1>
+
+      <h2>Booking a cervical screening appointment</h2>
+
+      <p>You'll be sent an invitation through the NHS App, by text or by letter when it's time to book your cervical screening appointment.</p>
+      <p>Your invitation will tell you where you can go for cervical screening and how to book.</p>
+      <p>Most cervical screening is done in a GP surgery by a female nurse or doctor.</p>
+      <p>You can usually call your GP surgery to book an appointment with them. You might be able to book the appointment online.</p>
+
+      {{ actionLink({
+        text: "Find your GP surgery",
+        href: "#"
+      }) }}
+
+      <p>In some parts of England, you may be able to go to a local sexual health clinic or walk-in centre instead.</p>
+
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">See what to do if you do not have an invitation</span>
+        </summary>
+        <div class="nhsuk-details__text">
+          <p>Call your GP surgery to book an appointment if you think you need cervical screening but:</p>
+          <ul>
+            <li>you've not been sent an invitation</li>
+            <li>you've lost the invitation</li>
+          </ul>
+          <p>If you're a trans man or are non-binary and have a cervix, and you have not been invited but think you should have been, contact your GP, sexual health service or transgender health clinic to get invitations.</p>
+        </div>
+      </details>
+
+      <details class="nhsuk-details nhsuk-expander">
+        <summary class="nhsuk-details__summary">
+          <span class="nhsuk-details__summary-text">See what to do if you're not registered with a GP</span>
+        </summary>
+        <div class="nhsuk-details__text">
+          <p>To book a cervical screening appointment if you're not registered with a GP, you can:</p>
+          <ul>
+            <li>register with a GP &ndash; <a href="#">read more about how to register with a GP</a></li>
+            <li>go to a walk-in centre that offers cervical screening</li>
+            <li>go to a sexual health clinic that offers cervical screening</li>
+          </ul>
+          {{ actionLink({
+            text: "Find a sexual health clinic",
+            href: "#"
+          }) }}
+        </div>
+      </details>
+
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            If you missed an appointment
+          </span>
+        </h3>
+        <p>If you were invited for cervical screening but missed or did not book an appointment, contact your GP surgery or local sexual health clinic to book now.</p>
+        <p>You can still book even if you were invited weeks or months ago.</p>
+      </div>
+
+      <h3>Home testing from 2026</h3>
+      <p>From 2026, you may be offered a human papillomavirus (HPV) home testing kit if you're eligible for cervical screening but rarely or never attend. This would mean you could take a sample yourself at home and return it for testing.</p>
+
+      <h2>When to book cervical screening</h2>
+
+      <p>Try to book your appointment as soon as you get invited. If you missed your last cervical screening, you do not need to wait for an invitation.</p>
+      <p>It's best to book an appointment for a time when:</p>
+      <ul>
+        <li>you're not having a period &ndash; if you have your period on the day of your screening test, contact your GP to rearrange your appointment</li>
+        <li>you've finished treatment if you have unusual vaginal discharge or a pelvic infection</li>
+      </ul>
+
+      <h3>Cervical screening during pregnancy</h3>
+      <p>Contact your GP surgery if you're pregnant and you get invited for cervical screening. If it's for routine cervical screening, the GP or nurse may ask you to wait to make an appointment until about 3 months after your baby is due.</p>
+      <p>If you've previously had an abnormal result from a cervical screening test and need a repeat test, you can still have this while you're pregnant. Your GP or midwife may ask you to have the test when you're 3 to 6 months pregnant. Cervical screening is safe to have while you're pregnant.</p>
+
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            <span class="nhsuk-u-visually-hidden">Important: </span>
+            Important
+          </span>
+        </h3>
+        <p>Avoid using any vaginal medicines, lubricants or creams in the 2 days before you go for cervical screening as they can affect the results.</p>
+      </div>
+
+      <h2>Things to ask when you book</h2>
+
+      <p>It's OK to let the GP surgery know if you have any worries about going for cervical screening.</p>
+
+      {{ list({
+        type: "tick",
+        title: "Do",
+        items: [
+          { item: "let them know if you'd like a woman to do the test – most nurses and doctors who take cervical screening samples are female" },
+          { item: "let them know if you'd like someone else to be in the room with you (a chaperone) – this could be someone you know, another nurse or a trained member of staff" },
+          { item: "ask for a longer appointment if you think you might need more time – some GP surgeries can offer a double booking" },
+          { item: "let them know if you're finding the test more difficult after going through the menopause – they can prescribe a vaginal oestrogen cream or pessary before the test" },
+          { item: "ask for a smaller speculum (a smooth, tube-shaped tool that's put into your vagina so they can see your cervix)" }
+        ]
+      }) }}
+
+      {{ list({
+        type: "cross",
+        title: "Don't",
+        items: [
+          { item: "be embarrassed about talking to the nurse or doctor on the day – they're trained to make you feel more comfortable and provide support" }
+        ]
+      }) }}
+
+      <h2>What to do if you do not want cervical screening</h2>
+
+      <p>It's your choice if you want to go for cervical screening. Cervical screening is one of the best ways to protect yourself from cervical cancer.</p>
+      <p>If you do not want to be invited for screening, you can ask not to be invited (opt out) by:</p>
+      <ul>
+        <li>writing a letter to your GP asking to be taken off their cervical screening list</li>
+        <li><a href="#">completing an informed choice form on the Cervical Screening Administration Service (CSAS) website</a> &ndash; you can either submit this online yourself or give a completed copy to your GP to submit for you</li>
+      </ul>
+      <p>You can ask your GP to put you back on the list at any time if you change your mind.</p>
+
+    </div>
+  </div>
+
+{% endblock %}

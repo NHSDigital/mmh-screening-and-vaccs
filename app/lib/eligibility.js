@@ -328,7 +328,12 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
       if (conditionResult === 'ineligible' || !minAgeOk) continue
     } else {
       // 'or' mode: age alone OR conditions alone can qualify
-      if (conditionResult === 'ineligible' && !minAgeOk) continue
+      // requireConditions means age is always required too
+      if (prog.eligibility.requireConditions) {
+        if (!minAgeOk || conditionResult === 'ineligible') continue
+      } else {
+        if (conditionResult === 'ineligible' && !minAgeOk) continue
+      }
     }
 
     const historyInfo = checkHistory(person, prog, today)
@@ -346,8 +351,12 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
     } else if (historyInfo.status === 'never-had' || historyInfo.status === 'overdue') {
       // Check if past the programme's overdue grace period
       if (prog.overdueDays && historyInfo.status === 'overdue') {
-        // Recurring programme past its interval — always overdue
-        displayStatus = 'overdue'
+        // Recurring programme past its interval — grace period then overdue
+        if (historyInfo.overdueDays > prog.overdueDays) {
+          displayStatus = 'overdue'
+        } else {
+          displayStatus = 'action-needed'
+        }
       } else if (prog.overdueDays && historyInfo.status === 'never-had') {
         // Never had: check if eligible for longer than the grace period
         const daysSinceEligible = getDaysSinceEligible(person, prog.eligibility, today)
@@ -373,6 +382,7 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
       name: prog.name,
       type: prog.type,
       description: prog.description,
+      link: prog.link,
       displayStatus,
       statusText: buildDescription(prog, displayStatus, historyInfo),
       lastDate: historyInfo.lastDate,
@@ -403,21 +413,16 @@ function buildDescription (prog, displayStatus, historyInfo) {
       if (prog.type === 'screening') {
         return 'You have not had this check before'
       }
-      return prog.description
+      return Array.isArray(prog.description) ? prog.description[0] : prog.description
 
     case 'action-needed':
       if (prog.seasonalWindow) {
         return `Available until ${formatSeasonalDateWithYear(prog.seasonalWindow.start, prog.seasonalWindow.end, 'end')}`
       }
-      if (historyInfo.status === 'overdue') {
-        return messages.overdue
-          ? messages.overdue(formatOverdueDays(historyInfo.overdueDays))
-          : `Due ${formatOverdueDays(historyInfo.overdueDays)} ago`
-      }
       if (historyInfo.status === 'never-had' && prog.type === 'screening') {
         return 'You have not had this check before'
       }
-      return prog.description
+      return Array.isArray(prog.description) ? prog.description[0] : prog.description
 
     case 'booked':
       return nbsp(new Date(historyInfo.lastDate)

@@ -24,6 +24,48 @@ router.use((req, res, next) => {
     req.session.data['userFirstName'] = persona.id
     req.session.data['userLastName'] = persona.lastName
   }
+
+  const today = getToday()
+
+  // Check if viewing a proxy
+  const proxyId = req.query.proxy
+  const allProxies = (persona && persona.proxies) || []
+  const activeProxy = proxyId ? allProxies.find(p => p.id === proxyId) : null
+  const activePerson = activeProxy || persona
+
+  if (activePerson) {
+    const grouped = getGroupedProgrammes(activePerson, today)
+    addReasonText(grouped, activePerson, today)
+    const excluded = getExcludedProgrammes(activePerson, grouped, today)
+
+    const seasonalIds = new Set(programmes.filter(p => p.seasonalWindow).map(p => p.id))
+    const missed = grouped.expired.filter(p => !seasonalIds.has(p.id))
+
+    const proxies = allProxies
+      .map(proxy => ({
+        ...proxy,
+        age: proxy.dateOfBirth ? calculateAge(proxy.dateOfBirth, today) : proxy.age
+      }))
+      .sort((a, b) => (b.age || 0) - (a.age || 0))
+
+    res.locals.persona = {
+      ...persona,
+      age: persona.dateOfBirth ? calculateAge(persona.dateOfBirth, today) : persona.age
+    }
+    res.locals.personas = personas
+    res.locals.today = today.toISOString().split('T')[0]
+    res.locals.grouped = grouped
+    res.locals.excluded = excluded
+    res.locals.missed = missed
+    res.locals.proxies = proxies
+    res.locals.activeProxy = activeProxy ? {
+      ...activeProxy,
+      age: activeProxy.dateOfBirth ? calculateAge(activeProxy.dateOfBirth, today) : activeProxy.age
+    } : null
+  }
+
+  res.locals.screeningLayout = req.session.data['screeningLayout'] || 'combined'
+
   next()
 })
 
@@ -55,9 +97,13 @@ router.get('/pages/home-p9', (req, res) => {
 
   const grouped = getGroupedProgrammes(persona, today)
   const actionNeededCount = grouped.actionNeeded.length
+  const vaccineActionNeededCount = grouped.actionNeeded.filter(p => p.type === 'vaccine').length
+  const screeningActionNeededCount = grouped.actionNeeded.filter(p => p.type === 'screening').length
 
   res.render('pages/home-p9', {
-    actionNeededCount
+    actionNeededCount,
+    vaccineActionNeededCount,
+    screeningActionNeededCount
   })
 })
 

@@ -544,6 +544,7 @@ module.exports = [
     id: "flu-vaccine",
     name: "Flu vaccine",
     type: "vaccine",
+    link: "how-to-book-flu",
     seasonalWindow: { start: "09-01", end: "03-31" },
     walkIn: true,
     description: ["An annual vaccine, usually available from autumn."],

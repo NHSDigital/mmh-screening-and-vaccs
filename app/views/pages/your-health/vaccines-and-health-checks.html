@@ -62,7 +62,7 @@
         stacked: true,
         cards: [
           {
-            title: 'Check and book vaccinations and health checks',
+            title: 'Due now',
             href: 'check-and-book',
             badgeLarge: {
               count: actionNeededCount,
@@ -70,12 +70,24 @@
             } if actionNeededCount > 0
           },
           {
-            title: 'View your vaccination and health check',
+            title: 'Vaccination record',
+            href: '#'
+          },
+          {
+            title: 'Health check results',
+            href: '#'
+          },
+          {
+            title: 'Ways to stay healthy',
             href: '#'
           }
         ]
       }) }}
 
+
+      {# ==========================================
+          Hidden for research
+         ========================================== #}
       {% if false %}
       {# Proxy switching #}
 

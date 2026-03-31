@@ -158,6 +158,25 @@ module.exports = [
   },
 
   {
+    id: "nhs-health-check",
+    name: "NHS Health Check",
+    type: "screening",
+    description: "A check of your heart and circulation health, to help spot early signs of stroke, kidney disease, heart disease and diabetes.",
+    settings: ["gp-surgery"],
+    overdueDays: 90,
+
+    eligibility: {
+      age: { min: 40, max: 74 },
+      sex: "all"
+    },
+
+    schedule: {
+      type: "recurring",
+      intervalYears: 5
+    }
+  },
+
+  {
     id: "aaa-screening",
     name: "Abdominal aortic aneurysm (AAA) screening",
     type: "screening",

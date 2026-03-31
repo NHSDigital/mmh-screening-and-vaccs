@@ -57,7 +57,7 @@
       {% endif %}
 
       {# Proxy switching #}
-
+      {% if false %}
       {% if proxies.length %}
         {% if activeProxy %}
           {# Viewing a proxy — show link back to self #}
@@ -98,6 +98,7 @@
           {% endif %}
         {% endif %}
       {% endif %}
+    {% endif %}
 
       {% if grouped.booked.length or grouped.actionNeeded.length or grouped.overdue.length or grouped.unknown.length or grouped.upcoming.length %}
         {{ programmeCards(grouped.booked, "Appointments") }}

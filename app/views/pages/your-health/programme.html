@@ -20,7 +20,13 @@
         <p>{{ statusText }}</p>
       {% endif %}
 
-      <p>{{ programme.description }}</p>
+      {% if programme.description is iterable and programme.description is not string %}
+        {% for para in programme.description %}
+          <p>{{ para }}</p>
+        {% endfor %}
+      {% else %}
+        <p>{{ programme.description }}</p>
+      {% endif %}
 
       {% if eligibilityReasons.length %}
         <p>Offered to you because {{ eligibilityReasons | join(' and ') }}.</p>

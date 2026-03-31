@@ -22,7 +22,16 @@
       {% if grouped.optedOut.length %}
         {% set cards = [] %}
         {% for prog in grouped.optedOut %}
-          {% set cards = (cards.push({ title: prog.name, href: "/pages/your-health/programme/" + prog.id, description: prog.description }), cards) %}
+          {% set descHtml %}
+            {% if prog.description is iterable and prog.description is not string %}
+              {% for para in prog.description %}
+                <p>{{ para }}</p>
+              {% endfor %}
+            {% else %}
+              <p>{{ prog.description }}</p>
+            {% endif %}
+          {% endset %}
+          {% set cards = (cards.push({ title: prog.name, href: "/pages/your-health/programme/" + prog.id, descriptionHtml: descHtml }), cards) %}
         {% endfor %}
         {{ nhsappCardGroup({
           stacked: true,

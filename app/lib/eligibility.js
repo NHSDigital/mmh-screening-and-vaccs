@@ -412,21 +412,16 @@ function buildDescription (prog, displayStatus, historyInfo) {
       if (prog.type === 'screening') {
         return 'You have not had this check before'
       }
-      return prog.description
+      return Array.isArray(prog.description) ? prog.description[0] : prog.description
 
     case 'action-needed':
       if (prog.seasonalWindow) {
         return `Available until ${formatSeasonalDateWithYear(prog.seasonalWindow.start, prog.seasonalWindow.end, 'end')}`
       }
-      if (historyInfo.status === 'overdue') {
-        return messages.overdue
-          ? messages.overdue(formatOverdueDays(historyInfo.overdueDays))
-          : `Due ${formatOverdueDays(historyInfo.overdueDays)} ago`
-      }
       if (historyInfo.status === 'never-had' && prog.type === 'screening') {
         return 'You have not had this check before'
       }
-      return prog.description
+      return Array.isArray(prog.description) ? prog.description[0] : prog.description
 
     case 'booked':
       return nbsp(new Date(historyInfo.lastDate)

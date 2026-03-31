@@ -68,6 +68,7 @@ module.exports = [
   {
     id: "cervical-screening",
     name: "Cervical screening",
+    link: "how-to-book-cervical",
     type: "screening",
     description:
       [

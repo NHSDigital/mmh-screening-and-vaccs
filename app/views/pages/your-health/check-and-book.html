@@ -31,7 +31,7 @@
           {% endif %}
         </div>
       {% endset %}
-      {% set cardHref = "/pages/your-health/programme/" + prog.id %}
+      {% set cardHref = prog.link if prog.link else "/pages/your-health/programme/" + prog.id %}
       {% set cards = (cards.push({ title: prog.name, href: cardHref, descriptionHtml: cardHtml }), cards) %}
     {% endfor %}
     {{ nhsappCardGroup({

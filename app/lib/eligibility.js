@@ -382,6 +382,7 @@ function getProgrammesForPerson (person, programmes, today = getToday()) {
       name: prog.name,
       type: prog.type,
       description: prog.description,
+      link: prog.link,
       displayStatus,
       statusText: buildDescription(prog, displayStatus, historyInfo),
       lastDate: historyInfo.lastDate,

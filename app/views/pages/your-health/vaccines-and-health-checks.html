@@ -62,7 +62,7 @@
         </p>
       {% endif %}
 
-      {% set actionNeededCount = 1 %}
+      {% set actionNeededCount = grouped.actionNeeded.length + grouped.overdue.length %}
 
       {{ nhsappCardGroup({
         stacked: true,

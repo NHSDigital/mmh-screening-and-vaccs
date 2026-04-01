@@ -169,7 +169,7 @@ module.exports = [
     type: "screening",
     description: ["A check of your heart and circulation health, to help spot early signs of stroke, kidney disease, heart disease and diabetes."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 40, max: 74 },

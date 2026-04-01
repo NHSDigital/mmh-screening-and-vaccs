@@ -110,7 +110,7 @@ module.exports = [
     // Amelia – healthy 35-year-old with children
     id: "Amelia",
     lastName: "Johnson",
-    dateOfBirth: "1990-11-08", // 35 years old
+    dateOfBirth: "1985-11-08", // 35 years old
     sex: "female",
     nominatedGpSurgery: "old-road-medical-practice",
     nominatedPharmacy: "prescription-2-you",

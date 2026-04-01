@@ -1,0 +1,40 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Health check results" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading }}
+      </h1>
+      <p>
+        Health checks you've had.
+      </p>
+
+      {% if screenings.length %}
+        {% set rows = [] %}
+        {% for item in screenings %}
+          {% set rows = (rows.push({
+            key: { text: item.name },
+            value: { text: item.lastDate | formatDate | nbsp }
+          }), rows) %}
+        {% endfor %}
+        {{ summaryList({
+          classes: "nhsuk-u-margin-bottom-6",
+          rows: rows
+        }) }}
+      {% else %}
+        <p>You have no health check results to show, check with your GP to get your history.</p>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}

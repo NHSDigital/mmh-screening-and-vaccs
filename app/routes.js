@@ -62,6 +62,21 @@ router.use((req, res, next) => {
       ...activeProxy,
       age: activeProxy.dateOfBirth ? calculateAge(activeProxy.dateOfBirth, today) : activeProxy.age
     } : null
+
+    // Build history arrays for the active person (persona or proxy)
+    const history = activePerson.history || {}
+    const historyItems = []
+    for (const [progId, entry] of Object.entries(history)) {
+      if (entry.optedOut) continue
+      if (!entry.lastDate) continue
+      const prog = programmes.find(p => p.id === progId)
+      if (!prog) continue
+      if (new Date(entry.lastDate) > today) continue
+      historyItems.push({ id: prog.id, name: prog.name, type: prog.type, lastDate: entry.lastDate })
+    }
+    historyItems.sort((a, b) => b.lastDate.localeCompare(a.lastDate))
+    res.locals.vaccines = historyItems.filter(h => h.type === 'vaccine')
+    res.locals.screenings = historyItems.filter(h => h.type === 'screening')
   }
 
   res.locals.screeningLayout = req.session.data['screeningLayout'] || 'combined'

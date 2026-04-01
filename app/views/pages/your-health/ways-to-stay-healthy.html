@@ -1,0 +1,57 @@
+{% extends 'layout-app.html' %}
+
+{% set hub = "Your health" %}
+
+{% set backLink = true %}
+{% set backLinkURL = "/pages/your-health/vaccines-and-health-checks" %}
+
+{% set pageHeading = "Ways to stay healthy" %}
+
+{% block content %}
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">
+        {{ pageHeading }}
+      </h1>
+
+      {{ nhsappCardGroup({
+        stacked: true,
+        cards: [
+          {
+            title: 'NHS Weight Management Programme',
+            href: '#',
+            description: 'A free 12-week program to support people living with obesity and who also have diabetes, high blood pressure.'
+          },
+          {
+            title: 'Coaching to improve your health',
+            href: '#',
+            description: 'The NHS AI Health coach can offer personalised support, with timely reminders and clear progress tracking.'
+          },
+          {
+            title: 'Help to stay healthy',
+            href: '#',
+            description: 'Free help from the NHS to eat healthily, lose weight or stop smoking.'
+          },
+          {
+            title: 'Quit smoking support',
+            href: '#',
+            description: 'Answer some simple questions to get a free 8-step quit smoking plan, with clear steps and support.'
+          },
+          {
+            title: 'Self-refer for Talking Therapy',
+            href: '#',
+            description: 'If you are suffering from anxiety or depression, PTSD or sleep issues, you can refer yourself for mental health support.'
+          },
+          {
+            title: 'Check your heart health',
+            href: '#',
+            description: 'Assess your risk of cardiovascular disease (like heart attack, stroke) by checking your qRisk score.'
+          }
+        ]
+      }) }}
+
+    </div>
+  </div>
+
+{% endblock %}

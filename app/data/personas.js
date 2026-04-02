@@ -14,9 +14,9 @@ module.exports = [
       smoker: undefined,        // don't know – triggers lung check
       exSmoker: undefined,      // don't know – triggers lung check
       pregnant: undefined,      //
-      clinicalRiskGroup: true,  // confirmed — triggers flu, pneumococcal
+      clinicalRiskGroup: false,  // confirmed — triggers flu, pneumococcal
       carer: undefined,         // don't know
-      immunosuppressed: true,   // confirmed — triggers flu, pneumococcal, shingles, COVID
+      immunosuppressed: false,   // confirmed — triggers flu, pneumococcal, shingles, COVID
       careHomeResident: false   // confirmed
     },
 
@@ -29,17 +29,18 @@ module.exports = [
       "breast-cancer":           { lastDate: "2026-03-10" },
 
       // COMPLETE — recently done
-      "nhs-health-check":        { lastDate: "2024-06-15" },
+      "nhs-health-check":        { lastDate: "2025-06-15" },
 
       // DUE — interval has passed
-      "diabetic-eye-screening":  { lastDate: "2024-01-20" },
+      "diabetic-eye-screening":  { lastDate: "2026-01-20" },
 
       // DUE — never had (no entry = never had)
-      // "pneumococcal-vaccine": — missing, so treated as never had
+      "pneumococcal-vaccine":    { lastDate: "2025-01-01" },
       // "lung-screening":       — missing, so treated as never had
 
       // Shingles dose 1 done, dose 2 not yet
-      "shingles-vaccine-1":      { lastDate: "2024-09-01" },
+      "shingles-vaccine-2":      { lastDate: "2025-12-01" },
+      "shingles-vaccine-1":      { lastDate: "2025-12-01" },
 
       // OPTED OUT
       "cervical-screening":      { optedOut: true },
@@ -98,7 +99,13 @@ module.exports = [
       "bowel-cancer":            { lastDate: "2024-03-25" },
 
       // Shingles dose 1 done, dose 2 due
-      "shingles-vaccine-1":      { lastDate: "2025-06-17" }
+      "shingles-vaccine-1":      { lastDate: "2025-06-17" },
+      "shingles-vaccine-2":      { lastDate: "2025-06-17" },
+
+      "pneumococcal-vaccine":    { lastDate: "2025-01-01" },
+
+      // health check
+      "nhs-health-check":        { lastDate: "2025-06-15" }
 
       // No flu-vaccine entry → due (seasonal, in window)
       // No lung-screening entry + unknown conditions → unknown

@@ -33,7 +33,7 @@ module.exports = [
     type: "screening",
     description: ["A home test kit to check for early signs of bowel cancer."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 50, max: 74 },
@@ -52,7 +52,7 @@ module.exports = [
     type: "screening",
     description: ["A mammogram to check for early signs of breast cancer."],
     settings: ["hospital", "clinic"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 50, max: 71 },
@@ -77,7 +77,7 @@ module.exports = [
         "Contact your GP to book an appointment."
       ],
     settings: ["gp-surgery", "clinic"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 25, max: 64 },
@@ -97,7 +97,7 @@ module.exports = [
     type: "screening",
     description: ["A home test kit to check for early signs of cervical cancer."],
     settings: ["home"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 25, max: 64 },
@@ -118,7 +118,7 @@ module.exports = [
     type: "screening",
     description: ["A low-dose CT scan to check for early signs of lung cancer."],
     settings: ["hospital"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 55, max: 74 },
@@ -146,7 +146,7 @@ module.exports = [
     type: "screening",
     description: ["A check for damage to the back of your eyes caused by diabetes."],
     settings: ["hospital", "clinic"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 12, max: null },
@@ -188,7 +188,7 @@ module.exports = [
     type: "screening",
     description: ["A one-off ultrasound scan to check for a swelling in the main blood vessel in your tummy."],
     settings: ["hospital"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 65, max: 65 },
@@ -211,7 +211,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -230,7 +230,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -250,7 +250,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against diphtheria, hepatitis B, Hib, polio, tetanus and whooping cough. Usually given at 16 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -270,7 +270,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against meningococcal group B bacteria. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -289,7 +289,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against meningococcal group B bacteria. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -309,7 +309,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against meningococcal group B bacteria. Booster, usually given at 1 year."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -329,7 +329,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 8 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 0 },
@@ -348,7 +348,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against rotavirus infection, a common cause of diarrhoea and sickness. Usually given at 12 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 0 },
@@ -368,7 +368,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against pneumococcal infections. Usually given at 16 weeks."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -387,7 +387,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against pneumococcal infections. Booster, usually given at 1 year."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 0, max: 1 },
@@ -408,7 +408,7 @@ module.exports = [
     walkIn: true,
     description: ["Protects against measles, mumps and rubella. Usually given at 1 year."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 1, max: 5 },
@@ -428,7 +428,7 @@ module.exports = [
     walkIn: true,
     description: ["Protects against measles, mumps and rubella. Usually given at 3 years 4 months."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 1, max: 5 },
@@ -447,7 +447,7 @@ module.exports = [
     type: "vaccine",
     description: ["A single dose to boost protection against diphtheria, tetanus, whooping cough and polio."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 3, max: 5 },
@@ -488,7 +488,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against cancers caused by HPV. Usually given in Year 8."],
     settings: ["gp-surgery", "clinic"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 12, max: 25 },
@@ -506,7 +506,7 @@ module.exports = [
     type: "vaccine",
     description: ["Boosts protection against tetanus, diphtheria and polio. Given in Year 9."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 14, max: 14 },
@@ -524,7 +524,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against meningitis and septicaemia (blood poisoning). Usually given in Year 9."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 14, max: 25 },
@@ -545,7 +545,7 @@ module.exports = [
     name: "Flu vaccine",
     type: "vaccine",
     link: "how-to-book-flu",
-    seasonalWindow: { start: "09-01", end: "03-31" },
+    seasonalWindow: { start: "09-01", end: "04-31" },
     walkIn: true,
     description: ["An annual vaccine, usually available from autumn."],
     settings: ["gp-surgery", "pharmacy"],
@@ -576,7 +576,7 @@ module.exports = [
     walkIn: true,
     description: ["A one-off vaccine to protect against pneumococcal infections."],
     settings: ["gp-surgery", "pharmacy"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 65, max: null },
@@ -603,7 +603,7 @@ module.exports = [
     type: "vaccine",
     description: ["Protects against shingles."],
     settings: ["gp-surgery", "pharmacy"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 65, max: 80 },
@@ -630,7 +630,7 @@ module.exports = [
     type: "vaccine",
     description: ["Second dose, given 6 months after the first."],
     settings: ["gp-surgery", "pharmacy"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 65, max: 80 },
@@ -658,7 +658,7 @@ module.exports = [
     walkIn: true,
     description: ["A one-off vaccine to protect against respiratory syncytial virus."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 75, max: null },
@@ -708,7 +708,7 @@ module.exports = [
     type: "vaccine",
     description: ["Recommended from 16 weeks of pregnancy to protect your baby."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 16, max: 50 },
@@ -734,7 +734,7 @@ module.exports = [
     type: "vaccine",
     description: ["Recommended from 28 weeks of pregnancy to protect your baby against RSV."],
     settings: ["gp-surgery"],
-    overdueDays: 90,
+    overdueDays: 365,
 
     eligibility: {
       age: { min: 16, max: 50 },
